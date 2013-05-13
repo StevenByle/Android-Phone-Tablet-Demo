@@ -1,4 +1,4 @@
-package com.captechconsulting.androidfragmentreuse.ui;
+package com.stevenbyle.androidfragmentreuse.controller;
 
 public interface OnImageSelectedListener {
 

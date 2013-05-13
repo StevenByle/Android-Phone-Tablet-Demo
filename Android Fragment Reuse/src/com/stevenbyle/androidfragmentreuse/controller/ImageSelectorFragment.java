@@ -1,4 +1,4 @@
-package com.captechconsulting.androidfragmentreuse.ui;
+package com.stevenbyle.androidfragmentreuse.controller;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,11 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.captechconsulting.androidfragmentreuse.R;
-import com.captechconsulting.androidfragmentreuse.model.StaticData;
-import com.captechconsulting.androidfragmentreuse.ui.list.ImageListFragment;
-import com.captechconsulting.androidfragmentreuse.ui.pager.ImagePagerFragment;
-import com.captechconsulting.androidfragmentreuse.ui.rotator.ImageRotatorFragment;
+import com.stevenbyle.androidfragmentreuse.R;
+import com.stevenbyle.androidfragmentreuse.controller.list.ImageListFragment;
+import com.stevenbyle.androidfragmentreuse.controller.pager.ImagePagerFragment;
+import com.stevenbyle.androidfragmentreuse.controller.rotator.ImageRotatorFragment;
+import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
 public class ImageSelectorFragment extends Fragment implements OnImageSelectedListener {
 	private static final String TAG = ImageSelectorFragment.class.getSimpleName();

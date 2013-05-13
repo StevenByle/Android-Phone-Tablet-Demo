@@ -1,4 +1,4 @@
-package com.captechconsulting.androidfragmentreuse.ui.list;
+package com.stevenbyle.androidfragmentreuse.controller.list;
 
 import java.util.List;
 import java.util.Map;
@@ -16,9 +16,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.captechconsulting.androidfragmentreuse.R;
-import com.captechconsulting.androidfragmentreuse.model.StaticData;
-import com.captechconsulting.androidfragmentreuse.ui.OnImageSelectedListener;
+import com.stevenbyle.androidfragmentreuse.R;
+import com.stevenbyle.androidfragmentreuse.controller.OnImageSelectedListener;
+import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
 public class ImageListFragment extends Fragment implements OnItemClickListener {
 	private static final String TAG = ImageListFragment.class.getSimpleName();

@@ -1,4 +1,4 @@
-package com.captechconsulting.androidfragmentreuse.ui.rotator;
+package com.stevenbyle.androidfragmentreuse.controller.rotator;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,8 +13,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
-import com.captechconsulting.androidfragmentreuse.R;
-import com.captechconsulting.androidfragmentreuse.model.StaticData;
+import com.stevenbyle.androidfragmentreuse.R;
+import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
 public class ImageRotatorFragment extends Fragment {
 	private static final String TAG = ImageRotatorFragment.class.getSimpleName();

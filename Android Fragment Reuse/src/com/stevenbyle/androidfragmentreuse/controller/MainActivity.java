@@ -1,4 +1,4 @@
-package com.captechconsulting.androidfragmentreuse.ui;
+package com.stevenbyle.androidfragmentreuse.controller;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,9 +8,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import com.captechconsulting.androidfragmentreuse.R;
-import com.captechconsulting.androidfragmentreuse.model.StaticData;
-import com.captechconsulting.androidfragmentreuse.ui.rotator.ImageRotatorFragment;
+import com.stevenbyle.androidfragmentreuse.R;
+import com.stevenbyle.androidfragmentreuse.controller.rotator.ImageRotatorFragment;
+import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
 public class MainActivity extends FragmentActivity implements OnImageSelectedListener {
 	private static final String TAG = MainActivity.class.getSimpleName();

@@ -1,4 +1,4 @@
-package com.captechconsulting.androidfragmentreuse.ui.pager;
+package com.stevenbyle.androidfragmentreuse.controller.pager;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;

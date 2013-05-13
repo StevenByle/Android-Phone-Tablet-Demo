@@ -1,4 +1,4 @@
-package com.captechconsulting.androidfragmentreuse.ui.pager;
+package com.stevenbyle.androidfragmentreuse.controller.pager;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.captechconsulting.androidfragmentreuse.R;
-import com.captechconsulting.androidfragmentreuse.model.StaticData;
-import com.captechconsulting.androidfragmentreuse.ui.OnImageSelectedListener;
+import com.stevenbyle.androidfragmentreuse.R;
+import com.stevenbyle.androidfragmentreuse.controller.OnImageSelectedListener;
+import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
 public class ImagePagerFragment extends Fragment implements OnPageChangeListener {
 	private static final String TAG = ImagePagerFragment.class.getSimpleName();

@@ -1,11 +1,11 @@
-package com.captechconsulting.androidfragmentreuse.model;
+package com.stevenbyle.androidfragmentreuse.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.captechconsulting.androidfragmentreuse.R;
+import com.stevenbyle.androidfragmentreuse.R;
 
 public class StaticData {
 	public static String COL_NAME_IMAGEVIEW = "col_name_imageview";
