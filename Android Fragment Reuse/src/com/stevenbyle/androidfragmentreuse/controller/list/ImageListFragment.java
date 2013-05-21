@@ -1,8 +1,5 @@
 package com.stevenbyle.androidfragmentreuse.controller.list;
 
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,7 +11,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import com.stevenbyle.androidfragmentreuse.R;
 import com.stevenbyle.androidfragmentreuse.controller.OnImageSelectedListener;
@@ -24,7 +20,7 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 	private static final String TAG = ImageListFragment.class.getSimpleName();
 
 	private ListView mListView;
-	private SimpleAdapter mSimpleAdapter;
+	private ImageItemArrayAdapter mImageItemArrayAdapter;
 	private OnImageSelectedListener mOnImageSelectedListener;
 	private Boolean mInitialCreate;
 
@@ -85,20 +81,15 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 		mListView = (ListView) v.findViewById(R.id.fragment_image_list_listview);
 		mListView.setOnItemClickListener(this);
 
-		// Line up the map key/column names to view ids
-		List<Map<String, Comparable>> mapList = StaticData.getMapListInstance();
-		String[] from = new String[] {StaticData.COL_NAME_IMAGEVIEW,
-				StaticData.COL_NAME_TEXTVIEW};
-		int[] to = new int[] {R.id.list_row_image_imageview,
-				R.id.list_row_image_textview_name};
-		mSimpleAdapter = new SimpleAdapter(getActivity(), mapList, R.layout.list_row_image, from, to);
-		mListView.setAdapter(mSimpleAdapter);
+		// Set an adapter to bind the iamge items to the list
+		mImageItemArrayAdapter = new ImageItemArrayAdapter(getActivity(), R.layout.list_row_image_items, StaticData.getImageItemArrayInstance());
+		mListView.setAdapter(mImageItemArrayAdapter);
 
 		// Set list view to highlight when item is pressed
 		mListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
-		// If first creation of fragment, default a selection
-		if (mInitialCreate) {
+		// If first creation of fragment, select the first item
+		if (mInitialCreate && mImageItemArrayAdapter.getCount() > 0) {
 			mInitialCreate = false;
 
 			// Highlight the selected row
@@ -177,7 +168,7 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 
 		// Inform our parent listener that an image was selected
 		if (mOnImageSelectedListener != null) {
-			int imageResourceId = StaticData.getImageIds()[position];
+			int imageResourceId = mImageItemArrayAdapter.getItem(position).getImageResId();
 			mOnImageSelectedListener.onImageSelected(imageResourceId);
 		}
 	}
@@ -193,7 +184,7 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 
 		// Our parent has notified that an image was selected, find its position
 		int position = -1;
-		int[] imageIds = StaticData.getImageIds();
+		int[] imageIds = StaticData.getImageResIds();
 		for (int i = 0; i < imageIds.length; i++) {
 			if (imageIds[i] == imageResourceId) {
 				position = i;
@@ -211,5 +202,6 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 			mListView.smoothScrollToPosition(position);
 		}
 	}
+
 
 }

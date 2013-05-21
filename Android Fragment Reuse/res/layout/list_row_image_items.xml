@@ -2,16 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/activatedBackgroundIndicator"
     android:gravity="center_vertical"
-    android:minHeight="50dp"
     android:orientation="horizontal"
     android:padding="10dp" >
 
     <ImageView
         android:id="@+id/list_row_image_imageview"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/list_row_image_item_dimensions"
+        android:layout_height="@dimen/list_row_image_item_dimensions"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter" />
 

@@ -49,7 +49,7 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 				Log.i(TAG, "onCreate: adding ImageRotatorFragment to MainActivity");
 
 				// Add fragment to the activity's container layout
-				ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(StaticData.getImageIds()[0]);
+				ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(StaticData.getImageResIds()[0]);
 				FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 				fragmentTransaction.replace(mImageRotatorLayout.getId(), imageRotatorFragment, ImageRotatorFragment.class.getName());
 

@@ -69,7 +69,7 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 
 		// Setup views
 		mViewPager = (ViewPager) v.findViewById(R.id.fragment_image_pager_viewpager);
-		mImagePagerAdapter = new ImagePagerAdapter(getActivity(), StaticData.getImageIds(), StaticData.getImageNames());
+		mImagePagerAdapter = new ImagePagerAdapter(getActivity(), StaticData.getImageResIds(), StaticData.getImageTitles());
 		mViewPager.setAdapter(mImagePagerAdapter);
 
 		// Listen for page changes to update other views
@@ -152,7 +152,7 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 
 		// Inform our parent listener that an image was selected
 		if (mOnImageSelectedListener != null) {
-			int imageResourceId = StaticData.getImageIds()[position];
+			int imageResourceId = StaticData.getImageResIds()[position];
 			mOnImageSelectedListener.onImageSelected(imageResourceId);
 		}
 	}
@@ -168,7 +168,7 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 
 		// Our parent has notified that an image was selected, find its position
 		int position = -1;
-		int[] imageIds = StaticData.getImageIds();
+		int[] imageIds = StaticData.getImageResIds();
 		for (int i = 0; i < imageIds.length; i++) {
 			if (imageIds[i] == imageResourceId) {
 				position = i;

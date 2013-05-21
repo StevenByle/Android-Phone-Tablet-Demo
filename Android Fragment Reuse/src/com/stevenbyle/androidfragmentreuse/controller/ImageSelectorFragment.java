@@ -79,7 +79,7 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 			mInitialCreate = true;
 
 			// Default the resource id to the first image
-			mImageResourceId = StaticData.getImageIds()[0];
+			mImageResourceId = StaticData.getImageResIds()[0];
 		}
 
 		// Set that this fragment has a menu

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="list_row_image_item_dimensions">48dp</dimen>
+    <dimen name="fragment_image_rotator_default_image_dimensions">128dp</dimen>
+    <dimen name="fragment_image_pager_image_padding">15dp</dimen>
+
+</resources>
