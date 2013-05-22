@@ -1,4 +1,4 @@
-package com.stevenbyle.androidfragmentreuse.controller.list;
+package com.stevenbyle.androidfragmentreuse.controller.selector.list;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -19,7 +19,7 @@ import com.stevenbyle.androidfragmentreuse.model.ImageUtils;
  * 
  * @author Steven Byle
  */
-public class ImageItemArrayAdapter extends ArrayAdapter<ImageItem> {
+public class ImageArrayAdapter extends ArrayAdapter<ImageItem> {
 	//private static final String TAG = ImageItemArrayAdapter.class.getSimpleName();
 
 	private final int mLayoutResourceId;
@@ -29,7 +29,7 @@ public class ImageItemArrayAdapter extends ArrayAdapter<ImageItem> {
 	 * @param layoutResourceId
 	 * @param imageItems
 	 */
-	public ImageItemArrayAdapter(Context context, int layoutResourceId, ImageItem[] imageItems) {
+	public ImageArrayAdapter(Context context, int layoutResourceId, ImageItem[] imageItems) {
 		super(context, layoutResourceId, imageItems);
 		mLayoutResourceId = layoutResourceId;
 	}

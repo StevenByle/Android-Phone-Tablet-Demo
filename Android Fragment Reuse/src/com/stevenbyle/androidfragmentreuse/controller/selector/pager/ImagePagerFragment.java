@@ -1,35 +1,34 @@
-package com.stevenbyle.androidfragmentreuse.controller.list;
+package com.stevenbyle.androidfragmentreuse.controller.selector.pager;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 
 import com.stevenbyle.androidfragmentreuse.R;
-import com.stevenbyle.androidfragmentreuse.controller.ImageSelector;
-import com.stevenbyle.androidfragmentreuse.controller.OnImageSelectedListener;
+import com.stevenbyle.androidfragmentreuse.controller.selector.ImageSelector;
+import com.stevenbyle.androidfragmentreuse.controller.selector.OnImageSelectedListener;
 import com.stevenbyle.androidfragmentreuse.model.ImageItem;
-import com.stevenbyle.androidfragmentreuse.model.StaticData;
+import com.stevenbyle.androidfragmentreuse.model.StaticImageData;
 
 /**
- * Fragment to show the images in a list and allow selections.
+ * Fragment to show images in a horizontally swiping pager, allowing the user to
+ * select images.
  * 
  * @author Steven Byle
  */
-public class ImageListFragment extends Fragment implements OnItemClickListener, ImageSelector {
-	private static final String TAG = ImageListFragment.class.getSimpleName();
+public class ImagePagerFragment extends Fragment implements OnPageChangeListener, ImageSelector {
+	private static final String TAG = ImagePagerFragment.class.getSimpleName();
 
-	private ListView mListView;
-	private ImageItemArrayAdapter mImageItemArrayAdapter;
+	private ViewPager mViewPager;
+	private ImagePagerAdapter mImagePagerAdapter;
 	private OnImageSelectedListener mOnImageSelectedListener;
-	private Boolean mInitialCreate;
+	private ImageItem[] mPagerImageItems;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -59,14 +58,6 @@ public class ImageListFragment extends Fragment implements OnItemClickListener, 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.v(TAG, "onCreate: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
-
-		// Track if this is the initial creation of the fragment
-		if (savedInstanceState != null) {
-			mInitialCreate = false;
-		}
-		else {
-			mInitialCreate = true;
-		}
 	}
 
 	@Override
@@ -74,32 +65,16 @@ public class ImageListFragment extends Fragment implements OnItemClickListener, 
 		Log.v(TAG, "onCreateView: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
 
 		// Inflate the fragment main view in the container provided
-		View v = inflater.inflate(R.layout.fragment_image_list, container, false);
+		View v = inflater.inflate(R.layout.fragment_image_pager, container, false);
 
 		// Setup views
-		mListView = (ListView) v.findViewById(R.id.fragment_image_list_listview);
-		mListView.setOnItemClickListener(this);
+		mViewPager = (ViewPager) v.findViewById(R.id.fragment_image_pager_viewpager);
+		mPagerImageItems = StaticImageData.getImageItemArrayInstance();
+		mImagePagerAdapter = new ImagePagerAdapter(mPagerImageItems);
+		mViewPager.setAdapter(mImagePagerAdapter);
 
-		// Set an adapter to bind the image items to the list
-		mImageItemArrayAdapter = new ImageItemArrayAdapter(getActivity(),
-				R.layout.list_row_image_items, StaticData.getImageItemArrayInstance());
-		mListView.setAdapter(mImageItemArrayAdapter);
-
-		// Set list view to highlight when an item is pressed
-		mListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-
-		// If first creation of fragment, select the first item
-		if (mInitialCreate && mImageItemArrayAdapter.getCount() > 0) {
-
-			// Default the selection to the first item
-			mListView.setItemChecked(0, true);
-		}
-
-		// Track that onCreateView has been called at least once since the
-		// initial onCreate
-		if (mInitialCreate) {
-			mInitialCreate = false;
-		}
+		// Listen for page changes to update other views
+		mViewPager.setOnPageChangeListener(this);
 
 		return v;
 	}
@@ -165,16 +140,20 @@ public class ImageListFragment extends Fragment implements OnItemClickListener, 
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Log.d(TAG, "onItemClick: " + "pos: " + position + " id: " + id);
+	public void onPageScrollStateChanged(int state) {
+	}
 
-		// Highlight the selected row
-		mListView.setItemChecked(position, true);
+	@Override
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+	}
+
+	@Override
+	public void onPageSelected(int position) {
+		Log.d(TAG, "onPageSelected: " + position);
 
 		// Inform our parent listener that an image was selected
 		if (mOnImageSelectedListener != null) {
-			ImageItem imageItem = mImageItemArrayAdapter.getItem(position);
-			mOnImageSelectedListener.onImageSelected(imageItem, position);
+			mOnImageSelectedListener.onImageSelected(mPagerImageItems[position], position);
 		}
 	}
 
@@ -184,14 +163,12 @@ public class ImageListFragment extends Fragment implements OnItemClickListener, 
 
 		if (isResumed()) {
 			// If the selected position is valid, and different than what is
-			// currently selected, highlight that row in the list and
-			// scroll to it
-			if (position >= 0 && position < mImageItemArrayAdapter.getCount()
-					&& position != mListView.getCheckedItemPosition()) {
+			// currently selected, move the pager to that image
+			if (position >= 0 && position < mImagePagerAdapter.getCount()
+					&& position != mViewPager.getCurrentItem()) {
 
-				// Highlight the selected row and scroll to it
-				mListView.setItemChecked(position, true);
-				mListView.smoothScrollToPosition(position);
+				// Move the view pager to the current image
+				mViewPager.setCurrentItem(position, true);
 			}
 		}
 	}

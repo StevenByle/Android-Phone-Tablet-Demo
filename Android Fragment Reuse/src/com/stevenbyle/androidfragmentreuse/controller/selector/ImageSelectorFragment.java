@@ -1,4 +1,4 @@
-package com.stevenbyle.androidfragmentreuse.controller;
+package com.stevenbyle.androidfragmentreuse.controller.selector;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -14,11 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.stevenbyle.androidfragmentreuse.R;
-import com.stevenbyle.androidfragmentreuse.controller.list.ImageListFragment;
-import com.stevenbyle.androidfragmentreuse.controller.pager.ImagePagerFragment;
 import com.stevenbyle.androidfragmentreuse.controller.rotator.ImageRotatorFragment;
+import com.stevenbyle.androidfragmentreuse.controller.selector.list.ImageListFragment;
+import com.stevenbyle.androidfragmentreuse.controller.selector.pager.ImagePagerFragment;
 import com.stevenbyle.androidfragmentreuse.model.ImageItem;
-import com.stevenbyle.androidfragmentreuse.model.StaticData;
+import com.stevenbyle.androidfragmentreuse.model.StaticImageData;
 
 /**
  * Fragment that allows the user to select an image using various sub-fragments,
@@ -80,7 +80,7 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 
 			// Default the resource id to the first image
 			int defaultPosition = 0;
-			mCurImageResourceId = StaticData.getImageItemArrayInstance()[defaultPosition].getImageResId();
+			mCurImageResourceId = StaticImageData.getImageItemArrayInstance()[defaultPosition].getImageResId();
 			mCurImagePosition = defaultPosition;
 		}
 

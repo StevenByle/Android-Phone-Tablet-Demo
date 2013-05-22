@@ -16,9 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import com.stevenbyle.androidfragmentreuse.R;
-import com.stevenbyle.androidfragmentreuse.controller.ImageSelector;
+import com.stevenbyle.androidfragmentreuse.controller.selector.ImageSelector;
 import com.stevenbyle.androidfragmentreuse.model.ImageItem;
-import com.stevenbyle.androidfragmentreuse.model.StaticData;
+import com.stevenbyle.androidfragmentreuse.model.StaticImageData;
 
 /**
  * Fragment to display a selected image and allow the user to adjust and
@@ -88,7 +88,7 @@ public class ImageRotatorFragment extends Fragment implements ImageSelector {
 		// Otherwise, default parameters
 		else {
 			// Default image resource to the first image
-			mImageResourceId = StaticData.getImageItemArrayInstance()[0].getImageResId();
+			mImageResourceId = StaticImageData.getImageItemArrayInstance()[0].getImageResId();
 		}
 
 		// Restore state, overwriting any passed in parameters

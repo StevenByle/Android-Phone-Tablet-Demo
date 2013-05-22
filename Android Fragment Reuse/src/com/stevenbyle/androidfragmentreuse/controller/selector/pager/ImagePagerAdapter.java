@@ -1,4 +1,4 @@
-package com.stevenbyle.androidfragmentreuse.controller.pager;
+package com.stevenbyle.androidfragmentreuse.controller.selector.pager;
 
 import android.content.Context;
 import android.content.res.Resources;

@@ -1,4 +1,4 @@
-package com.stevenbyle.androidfragmentreuse.controller;
+package com.stevenbyle.androidfragmentreuse.controller.selector;
 
 import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 

@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 
 import com.stevenbyle.androidfragmentreuse.R;
 import com.stevenbyle.androidfragmentreuse.controller.rotator.ImageRotatorFragment;
+import com.stevenbyle.androidfragmentreuse.controller.selector.ImageSelectorFragment;
+import com.stevenbyle.androidfragmentreuse.controller.selector.OnImageSelectedListener;
 import com.stevenbyle.androidfragmentreuse.model.ImageItem;
-import com.stevenbyle.androidfragmentreuse.model.StaticData;
+import com.stevenbyle.androidfragmentreuse.model.StaticImageData;
 
 /**
  * Main activity to host the entire application.
@@ -59,7 +61,7 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 				Log.i(TAG, "onCreate: adding ImageRotatorFragment to MainActivity");
 
 				// Add image rotator fragment to the activity's container layout
-				ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(StaticData.getImageItemArrayInstance()[0].getImageResId());
+				ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(StaticImageData.getImageItemArrayInstance()[0].getImageResId());
 				FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 				fragmentTransaction.replace(mImageRotatorLayout.getId(), imageRotatorFragment, ImageRotatorFragment.class.getName());
 
