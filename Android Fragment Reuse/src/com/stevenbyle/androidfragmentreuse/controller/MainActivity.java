@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.stevenbyle.androidfragmentreuse.R;
 import com.stevenbyle.androidfragmentreuse.controller.rotator.ImageRotatorFragment;
+import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
 public class MainActivity extends FragmentActivity implements OnImageSelectedListener {
@@ -49,7 +50,7 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 				Log.i(TAG, "onCreate: adding ImageRotatorFragment to MainActivity");
 
 				// Add fragment to the activity's container layout
-				ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(StaticData.getImageResIds()[0]);
+				ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(StaticData.getImageItemArrayInstance()[0].getImageResId());
 				FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 				fragmentTransaction.replace(mImageRotatorLayout.getId(), imageRotatorFragment, ImageRotatorFragment.class.getName());
 
@@ -100,8 +101,8 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 	}
 
 	@Override
-	public void onImageSelected(int imageResourceId) {
-		Log.d(TAG, "onImageSelected: imageResourceId = " + imageResourceId);
+	public void onImageSelected(ImageItem imageItem, int position) {
+		Log.d(TAG, "onImageSelected:  title = " + imageItem.getTitle() + " position = " + position);
 
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		Fragment imageRotatorFragment = fragmentManager.findFragmentByTag(ImageRotatorFragment.class.getName());
@@ -112,7 +113,7 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 
 			// Only interact with fragments that are resumed
 			if (imageRotatorFragment.isResumed()) {
-				((ImageRotatorFragment) imageRotatorFragment).setRotatingImageResourceId(imageResourceId);
+				((ImageRotatorFragment) imageRotatorFragment).setRotatingImageResourceId(imageItem.getImageResId());
 			}
 		}
 	}

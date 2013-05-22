@@ -3,10 +3,27 @@ package com.stevenbyle.androidfragmentreuse.model;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
+/**
+ * Image utility class for image manipulations.
+ * 
+ * 
+ * @author Steven Byle
+ */
 public class ImageUtils {
 	private static final String TAG = ImageUtils.class.getSimpleName();
 
+	/**
+	 * Load a bitmap equal to or larger than requested dimensions, loading the
+	 * smallest version into memory.
+	 * 
+	 * @param resources
+	 * @param resourceId
+	 * @param reqWidth
+	 * @param reqHeight
+	 * @return
+	 */
 	public static Bitmap decodeSampledBitmapFromResource(Resources resources, int resourceId, int reqWidth, int reqHeight) {
 
 		// First decode check the raw image dimensions
@@ -39,11 +56,11 @@ public class ImageUtils {
 			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
 		}
 
-		/*
+
 		Log.i(TAG, "calculateInSampleSize: imageHeight = " + imageHeight + " imageWidth = " + imageWidth
 				+ " reqWidth = " + reqWidth + " reqHeight = " + reqHeight
 				+ " inSampleSize = " + inSampleSize);
-		 */
+
 
 		return inSampleSize;
 	}

@@ -24,7 +24,7 @@ public class StaticData {
 		"Globe", "Hamburger", "Note Pad", "Play", "Sun", "Linux Tux",
 	"Yawn"};
 
-	public static List<ImageItem> getImageItemListInstance() {
+	private static List<ImageItem> getImageItemListInstance() {
 		if (mImageItemList == null) {
 			mImageItemList = new ArrayList<ImageItem>();
 
@@ -36,6 +36,9 @@ public class StaticData {
 		return mImageItemList;
 	}
 
+	/**
+	 * @return static instance of the image item array
+	 */
 	public static ImageItem[] getImageItemArrayInstance() {
 		if (mImageItemArray == null) {
 			mImageItemArray = new ImageItem[imageResIds.length];
@@ -46,20 +49,6 @@ public class StaticData {
 			}
 		}
 		return mImageItemArray;
-	}
-
-	/**
-	 * @return the imageResIds
-	 */
-	public static int[] getImageResIds() {
-		return imageResIds;
-	}
-
-	/**
-	 * @return the imageTitles
-	 */
-	public static String[] getImageTitles() {
-		return imageTitles;
 	}
 
 }

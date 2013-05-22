@@ -1,5 +1,12 @@
 package com.stevenbyle.androidfragmentreuse.model;
 
+/**
+ * Image object holding the image resource and title.
+ * 
+ * 
+ * @author Steven Byle
+ * 
+ */
 public class ImageItem {
 
 	private String title;

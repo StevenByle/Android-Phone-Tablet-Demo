@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import com.stevenbyle.androidfragmentreuse.R;
 import com.stevenbyle.androidfragmentreuse.controller.OnImageSelectedListener;
+import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
 public class ImageListFragment extends Fragment implements OnItemClickListener {
@@ -168,34 +169,23 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 
 		// Inform our parent listener that an image was selected
 		if (mOnImageSelectedListener != null) {
-			int imageResourceId = mImageItemArrayAdapter.getItem(position).getImageResId();
-			mOnImageSelectedListener.onImageSelected(imageResourceId);
+			ImageItem imageItem = mImageItemArrayAdapter.getItem(position);
+			mOnImageSelectedListener.onImageSelected(imageItem, position);
 		}
 	}
 
 	/**
 	 * Set the list to highlight an image resource, if the image is in the list.
 	 * 
-	 * @param imageResourceId
-	 *            image resource to scroll to
+	 * @param position
+	 *            list position to scroll to
 	 */
-	public void selectImage(int imageResourceId) {
-		Log.d(TAG, "selectImage: imageResourceId = " + imageResourceId);
+	public void selectImage(int position) {
+		Log.d(TAG, "selectImage: position = " + position);
 
-		// Our parent has notified that an image was selected, find its position
-		int position = -1;
-		int[] imageIds = StaticData.getImageResIds();
-		for (int i = 0; i < imageIds.length; i++) {
-			if (imageIds[i] == imageResourceId) {
-				position = i;
-				break;
-			}
-		}
-
-		// If we find the image's position, highlight that row in the list and
+		// If the selected position is valid, highlight that row in the list and
 		// scroll to it
-		if (position != -1) {
-			Log.d(TAG, "selectImage: setting current item = " + position);
+		if (position >= 0 && position <  mImageItemArrayAdapter.getCount()) {
 
 			// Highlight the selected row and scroll to it
 			mListView.setItemChecked(position, true);

@@ -17,6 +17,7 @@ import com.stevenbyle.androidfragmentreuse.R;
 import com.stevenbyle.androidfragmentreuse.controller.list.ImageListFragment;
 import com.stevenbyle.androidfragmentreuse.controller.pager.ImagePagerFragment;
 import com.stevenbyle.androidfragmentreuse.controller.rotator.ImageRotatorFragment;
+import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
 public class ImageSelectorFragment extends Fragment implements OnImageSelectedListener {
@@ -79,7 +80,7 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 			mInitialCreate = true;
 
 			// Default the resource id to the first image
-			mImageResourceId = StaticData.getImageResIds()[0];
+			mImageResourceId = StaticData.getImageItemArrayInstance()[0].getImageResId();
 		}
 
 		// Set that this fragment has a menu
@@ -247,11 +248,11 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 	}
 
 	@Override
-	public void onImageSelected(int imageResourceId) {
-		Log.d(TAG, "onImageSelected: imageResourceId = " + imageResourceId);
+	public void onImageSelected(ImageItem imageItem, int position) {
+		Log.d(TAG, "onImageSelected:  title = " + imageItem.getTitle() + " position = " + position);
 
 		// Keep track of the selected image
-		mImageResourceId = imageResourceId;
+		mImageResourceId = imageItem.getImageResId();
 
 		// Get this fragment's fragment manager
 		FragmentManager fragmentManager = getChildFragmentManager();
@@ -261,15 +262,15 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 		// If the fragments are in our layout, have them select the current
 		// image
 		if (imageListFragment != null && imageListFragment.isResumed()) {
-			imageListFragment.selectImage(imageResourceId);
+			imageListFragment.selectImage(mImageResourceId);
 		}
 		if (imagePagerFragment != null && imagePagerFragment.isResumed()) {
-			imagePagerFragment.selectImage(imageResourceId);
+			imagePagerFragment.selectImage(mImageResourceId);
 		}
 
 		// Notify our parent listener that an image was selected
 		if (mOnImageSelectedListener != null) {
-			mOnImageSelectedListener.onImageSelected(imageResourceId);
+			mOnImageSelectedListener.onImageSelected(imageItem, position);
 		}
 	}
 }

@@ -8,33 +8,42 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.stevenbyle.androidfragmentreuse.R;
+import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 
+/**
+ * Pager adapter that binds image items to a swiping pager.
+ * 
+ * @author Steven Byle
+ */
 public class ImagePagerAdapter extends PagerAdapter {
 
-	private final Context mContext;
-	private final int[] mImageIds;
-	private final String[] mImageNames;
+	private final ImageItem[] mImageItemArray;
 
-	public ImagePagerAdapter(Context context, int[] imageIds, String[] imageNames) {
-		mContext = context;
-		mImageIds = imageIds;
-		mImageNames = imageNames;
+	/**
+	 * Constructor that takes an array of image items to display.
+	 * 
+	 * @param imageItemArray
+	 */
+	public ImagePagerAdapter(ImageItem[] imageItemArray) {
+		mImageItemArray = imageItemArray;
 	}
 
 	@Override
 	public int getCount() {
-		return mImageIds.length;
+		return mImageItemArray.length;
 	}
 
 	@Override
 	public Object instantiateItem(ViewGroup collection, int position) {
 
-		// Create the image view and set the padding and bitmap
-		ImageView imageView = new ImageView(mContext);
-		Resources res = mContext.getResources();
+		Context context = collection.getContext();
+		Resources res = context.getResources();
 		int paddingInPixels = res.getDimensionPixelSize(R.dimen.fragment_image_pager_image_padding);
+
+		// Create the image view and set the padding and bitmap
+		ImageView imageView = new ImageView(context);
 		imageView.setPadding(paddingInPixels, paddingInPixels, paddingInPixels, paddingInPixels);
-		imageView.setImageResource(mImageIds[position]);
+		imageView.setImageResource(mImageItemArray[position].getImageResId());
 
 		// Add the image view to the collection
 		collection.addView(imageView);
@@ -54,7 +63,7 @@ public class ImagePagerAdapter extends PagerAdapter {
 
 	@Override
 	public CharSequence getPageTitle(int position) {
-		return mImageNames[position];
+		return mImageItemArray[position].getTitle();
 	}
 
 }

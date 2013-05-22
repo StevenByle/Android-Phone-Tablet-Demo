@@ -69,7 +69,7 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 
 		// Setup views
 		mViewPager = (ViewPager) v.findViewById(R.id.fragment_image_pager_viewpager);
-		mImagePagerAdapter = new ImagePagerAdapter(getActivity(), StaticData.getImageResIds(), StaticData.getImageTitles());
+		mImagePagerAdapter = new ImagePagerAdapter(StaticData.getImageItemArrayInstance());
 		mViewPager.setAdapter(mImagePagerAdapter);
 
 		// Listen for page changes to update other views
@@ -152,33 +152,21 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 
 		// Inform our parent listener that an image was selected
 		if (mOnImageSelectedListener != null) {
-			int imageResourceId = StaticData.getImageResIds()[position];
-			mOnImageSelectedListener.onImageSelected(imageResourceId);
+			mOnImageSelectedListener.onImageSelected(StaticData.getImageItemArrayInstance()[position], position);
 		}
 	}
 
 	/**
 	 * Set the view pager to scroll to an image resource, if the image is in the pager.
 	 * 
-	 * @param imageResourceId
-	 *            image resource to scroll to
+	 * @param position
+	 *            image position to scroll to
 	 */
-	public void selectImage(int imageResourceId) {
-		Log.d(TAG, "selectImage: imageResourceId = " + imageResourceId);
+	public void selectImage(int position) {
+		Log.d(TAG, "selectImage: position = " + position);
 
-		// Our parent has notified that an image was selected, find its position
-		int position = -1;
-		int[] imageIds = StaticData.getImageResIds();
-		for (int i = 0; i < imageIds.length; i++) {
-			if (imageIds[i] == imageResourceId) {
-				position = i;
-				break;
-			}
-		}
-
-		// If we find the image's position, set our pager to that image
-		if (position != -1) {
-			Log.d(TAG, "selectImage: setting current item = " + position);
+		// If the selected position is valid, move the pager to that image
+		if (position >= 0 && position <  mImagePagerAdapter.getCount()) {
 
 			// Move the view pager to the current image
 			mViewPager.setCurrentItem(position, true);

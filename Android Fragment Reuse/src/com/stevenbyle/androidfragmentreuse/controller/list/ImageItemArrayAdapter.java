@@ -3,6 +3,7 @@ package com.stevenbyle.androidfragmentreuse.controller.list;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,10 +57,10 @@ public class ImageItemArrayAdapter extends ArrayAdapter<ImageItem> {
 		Bitmap sampledBitmap = ImageUtils.decodeSampledBitmapFromResource(getContext().getResources(),
 				imageResId, dimensInPixels, dimensInPixels);
 
-		/*
+
 		Log.i(TAG, "getView: sampledBitmap.getWidth() = " + sampledBitmap.getWidth()
 				+ " sampledBitmap.getHeight() = " + sampledBitmap.getHeight());
-		 */
+
 
 		holder.titleText.setText(title);
 		holder.imageView.setImageBitmap(sampledBitmap);

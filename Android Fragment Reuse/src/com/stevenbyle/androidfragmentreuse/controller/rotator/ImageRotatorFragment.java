@@ -70,11 +70,11 @@ public class ImageRotatorFragment extends Fragment {
 		// Set incoming parameters
 		Bundle args = getArguments();
 		if (args != null) {
-			mImageResourceId = args.getInt(KEY_ARG_IMAGE_RES_ID, StaticData.getImageResIds()[0]);
+			mImageResourceId = args.getInt(KEY_ARG_IMAGE_RES_ID, -1);
 		}
 		else {
 			// Default image resource to the first image
-			mImageResourceId = StaticData.getImageResIds()[0];
+			mImageResourceId = StaticData.getImageItemArrayInstance()[0].getImageResId();
 		}
 
 		Log.i(TAG, "onCreate: mImageResourceId = " + mImageResourceId);
