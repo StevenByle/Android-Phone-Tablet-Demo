@@ -37,7 +37,9 @@ public class ImageUtils {
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeResource(resources, resourceId, options);
+
+		Bitmap bm = BitmapFactory.decodeResource(resources, resourceId, options);
+		return bm;
 	}
 
 	private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -56,11 +58,9 @@ public class ImageUtils {
 			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
 		}
 
-
 		Log.i(TAG, "calculateInSampleSize: imageHeight = " + imageHeight + " imageWidth = " + imageWidth
 				+ " reqWidth = " + reqWidth + " reqHeight = " + reqHeight
 				+ " inSampleSize = " + inSampleSize);
-
 
 		return inSampleSize;
 	}

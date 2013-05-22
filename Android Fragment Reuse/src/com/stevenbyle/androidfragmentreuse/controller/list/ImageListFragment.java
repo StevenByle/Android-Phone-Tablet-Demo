@@ -30,31 +30,22 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 		super.onAttach(activity);
 		Log.v(TAG, "onAttach");
 
-		// Check if parent fragment implements our image
-		// selected callback
+		// Check if parent fragment (if there is one) implements the image
+		// selection interface
 		Fragment parentFragment = getParentFragment();
-		if (parentFragment != null) {
-			try {
-				mOnImageSelectedListener = (OnImageSelectedListener) parentFragment;
-			}
-			catch (ClassCastException e) {
-			}
+		if (parentFragment != null && parentFragment instanceof OnImageSelectedListener) {
+			mOnImageSelectedListener = (OnImageSelectedListener) parentFragment;
 		}
-
-		// Otherwise check if parent activity implements our image
-		// selected callback
-		if (mOnImageSelectedListener == null && activity != null) {
-			try {
-				mOnImageSelectedListener = (OnImageSelectedListener) activity;
-			}
-			catch (ClassCastException e) {
-			}
+		// Otherwise, check if parent activity implements the image
+		// selection interface
+		else if (activity != null && activity instanceof OnImageSelectedListener) {
+			mOnImageSelectedListener = (OnImageSelectedListener) activity;
 		}
-
-		// If neither implements the image selected callback, warn that
+		// If neither implements the image selection callback, warn that
 		// selections are being missed
-		if (mOnImageSelectedListener == null) {
-			Log.w(TAG, "onAttach: niether the parent fragment or parent activity implement OnImageSelectedListener, image selections will not be handled");
+		else if (mOnImageSelectedListener == null) {
+			Log.w(TAG, "onAttach: niether the parent fragment or parent activity implement OnImageSelectedListener, "
+					+ "image selections will not be communicated to other components");
 		}
 	}
 
@@ -63,6 +54,7 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 		super.onCreate(savedInstanceState);
 		Log.v(TAG, "onCreate");
 
+		// Keep track if this is the initial creation of the fragment
 		if (savedInstanceState == null) {
 			mInitialCreate = true;
 		}
@@ -89,12 +81,18 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 		// Set list view to highlight when item is pressed
 		mListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
-		// If first creation of fragment, select the first item
+		// If first creation of fragment, select the first image
 		if (mInitialCreate && mImageItemArrayAdapter.getCount() > 0) {
 			mInitialCreate = false;
 
 			// Highlight the selected row
 			mListView.setItemChecked(0, true);
+		}
+
+		// Track that onCreateView has been called at least once since the
+		// initial onCreate
+		if (mInitialCreate) {
+			mInitialCreate = false;
 		}
 
 		return v;
@@ -185,13 +183,12 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 
 		// If the selected position is valid, highlight that row in the list and
 		// scroll to it
-		if (position >= 0 && position <  mImageItemArrayAdapter.getCount()) {
+		if (position >= 0 && position < mImageItemArrayAdapter.getCount()) {
 
 			// Highlight the selected row and scroll to it
 			mListView.setItemChecked(position, true);
 			mListView.smoothScrollToPosition(position);
 		}
 	}
-
 
 }

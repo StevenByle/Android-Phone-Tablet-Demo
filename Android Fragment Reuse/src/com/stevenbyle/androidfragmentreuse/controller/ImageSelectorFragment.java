@@ -37,31 +37,22 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 		super.onAttach(activity);
 		Log.v(TAG, "onAttach");
 
-		// Check if parent fragment implements our image
-		// selected callback
+		// Check if parent fragment (if there is one) implements the image
+		// selection interface
 		Fragment parentFragment = getParentFragment();
-		if (parentFragment != null) {
-			try {
-				mOnImageSelectedListener = (OnImageSelectedListener) parentFragment;
-			}
-			catch (ClassCastException e) {
-			}
+		if (parentFragment != null && parentFragment instanceof OnImageSelectedListener) {
+			mOnImageSelectedListener = (OnImageSelectedListener) parentFragment;
 		}
-
-		// Otherwise check if parent activity implements our image
-		// selected callback
-		if (mOnImageSelectedListener == null && activity != null) {
-			try {
-				mOnImageSelectedListener = (OnImageSelectedListener) activity;
-			}
-			catch (ClassCastException e) {
-			}
+		// Otherwise, check if parent activity implements the image
+		// selection interface
+		else if (activity != null && activity instanceof OnImageSelectedListener) {
+			mOnImageSelectedListener = (OnImageSelectedListener) activity;
 		}
-
-		// If neither implements the image selected callback, warn that
+		// If neither implements the image selection callback, warn that
 		// selections are being missed
-		if (mOnImageSelectedListener == null) {
-			Log.w(TAG, "onAttach: niether the parent fragment or parent activity implement OnImageSelectedListener, image selections will not be handled");
+		else if (mOnImageSelectedListener == null) {
+			Log.w(TAG, "onAttach: niether the parent fragment or parent activity implement OnImageSelectedListener, "
+					+ "image selections will not be communicated to other components");
 		}
 	}
 
