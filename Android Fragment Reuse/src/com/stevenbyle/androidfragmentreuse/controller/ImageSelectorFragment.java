@@ -20,17 +20,23 @@ import com.stevenbyle.androidfragmentreuse.controller.rotator.ImageRotatorFragme
 import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
+/**
+ * Fragment that allows the user to select an image using various sub-fragments,
+ * while keeping them in sync with each other.
+ * 
+ * @author Steven Byle
+ */
 public class ImageSelectorFragment extends Fragment implements OnImageSelectedListener {
 	private static final String TAG = ImageSelectorFragment.class.getSimpleName();
 
 	// State keys
-	private static final String KEY_STATE_IMAGE_RESOURCE_ID = "KEY_STATE_IMAGE_RESOURCE_ID";
+	private static final String KEY_STATE_CUR_IMAGE_RESOURCE_ID = "KEY_STATE_CUR_IMAGE_RESOURCE_ID";
+	private static final String KEY_STATE_CUR_IMAGE_POSITION = "KEY_STATE_CUR_IMAGE_POSITION";
 
-	private ViewGroup mListLayout, mPagerLayout;
-	private OnImageSelectedListener mOnImageSelectedListener;
 	private Boolean mInitialCreate;
-	private int mImageResourceId;
-	private ViewGroup mContainer;
+	private int mCurImageResourceId, mCurImagePosition;
+	private ViewGroup mListLayout, mPagerLayout, mContainer;
+	private OnImageSelectedListener mOnImageSelectedListener;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -59,19 +65,23 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.v(TAG, "onCreate");
+		Log.v(TAG, "onCreate: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
 
+		// Restore state
 		if (savedInstanceState != null) {
 			mInitialCreate = false;
 
-			// Restore our state
-			mImageResourceId = savedInstanceState.getInt(KEY_STATE_IMAGE_RESOURCE_ID);
+			mCurImageResourceId = savedInstanceState.getInt(KEY_STATE_CUR_IMAGE_RESOURCE_ID);
+			mCurImagePosition = savedInstanceState.getInt(KEY_STATE_CUR_IMAGE_POSITION);
 		}
+		// Otherwise, default state
 		else {
 			mInitialCreate = true;
 
 			// Default the resource id to the first image
-			mImageResourceId = StaticData.getImageItemArrayInstance()[0].getImageResId();
+			int defaultPosition = 0;
+			mCurImageResourceId = StaticData.getImageItemArrayInstance()[defaultPosition].getImageResId();
+			mCurImagePosition = defaultPosition;
 		}
 
 		// Set that this fragment has a menu
@@ -80,8 +90,7 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		Log.v(TAG, "onCreateView");
-		Log.d(TAG, "onCreateView: mInitialCreate = " + mInitialCreate);
+		Log.v(TAG, "onCreateView: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
 
 		// Inflate the fragment main view in the container
 		View v = inflater.inflate(R.layout.fragment_image_selector, container, false);
@@ -163,7 +172,8 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 		super.onSaveInstanceState(outState);
 		Log.v(TAG, "onSaveInstanceState");
 
-		outState.putInt(KEY_STATE_IMAGE_RESOURCE_ID, mImageResourceId);
+		outState.putInt(KEY_STATE_CUR_IMAGE_RESOURCE_ID, mCurImageResourceId);
+		outState.putInt(KEY_STATE_CUR_IMAGE_POSITION, mCurImagePosition);
 	}
 
 	@Override
@@ -201,36 +211,24 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 			case R.id.menu_rotate:
 				Log.i(TAG, "onOptionsItemSelected: rotate menu item selected");
 
+				// This menu option is only provided to phone layouts, since
+				// tablet layouts show the image rotator at all times
+
 				// Get the parent activity's fragment manager
 				FragmentManager fragmentManager = getFragmentManager();
-				ImageRotatorFragment imageRotatorFragment = (ImageRotatorFragment) fragmentManager.findFragmentByTag(ImageRotatorFragment.class.getName());
 
-				// If our rotating fragment is in our current layout, update its
-				// image
-				if (imageRotatorFragment != null) {
+				// Create the image rotator fragment and pass in arguments
+				ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(mCurImageResourceId);
 
-					// Only interact with views of a fragment if it is resumed
-					if (imageRotatorFragment.isResumed()) {
-						imageRotatorFragment.setRotatingImageResourceId(mImageResourceId);
-					}
-				}
-				// Otherwise, add the image rotator fragment on top of the image
-				// selector fragment and create a stack
-				else {
+				// Add the new fragment on top of this one, and add it to
+				// the back stack
+				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+				fragmentTransaction.replace(mContainer.getId(), imageRotatorFragment, ImageRotatorFragment.class.getName());
+				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+				fragmentTransaction.addToBackStack(null);
 
-					// Create the image rotator fragment and pass in arguments
-					imageRotatorFragment = ImageRotatorFragment.newInstance(mImageResourceId);
-
-					// Add the new fragment on top of this one, and add it to
-					// the back stack
-					FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-					fragmentTransaction.replace(mContainer.getId(), imageRotatorFragment, ImageRotatorFragment.class.getName());
-					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-					fragmentTransaction.addToBackStack(null);
-
-					// Commit the transaction
-					fragmentTransaction.commit();
-				}
+				// Commit the transaction
+				fragmentTransaction.commit();
 
 				return true;
 			default:
@@ -240,28 +238,35 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 
 	@Override
 	public void onImageSelected(ImageItem imageItem, int position) {
-		Log.d(TAG, "onImageSelected:  title = " + imageItem.getTitle() + " position = " + position);
+		Log.d(TAG, "onImageSelected: title = " + imageItem.getTitle() + " position = " + position
+				+ (mCurImagePosition != position ? " new " : " redundant") + " update");
 
-		// Keep track of the selected image
-		mImageResourceId = imageItem.getImageResId();
+		// Only inform the other fragments if the selected position is new
+		if (mCurImagePosition != position) {
 
-		// Get this fragment's fragment manager
-		FragmentManager fragmentManager = getChildFragmentManager();
-		ImageListFragment imageListFragment = (ImageListFragment) fragmentManager.findFragmentByTag(ImageListFragment.class.getName());
-		ImagePagerFragment imagePagerFragment = (ImagePagerFragment) fragmentManager.findFragmentByTag(ImagePagerFragment.class.getName());
+			// Keep track of the selected image
+			mCurImageResourceId = imageItem.getImageResId();
+			mCurImagePosition = position;
 
-		// If the fragments are in our layout, have them select the current
-		// image
-		if (imageListFragment != null && imageListFragment.isResumed()) {
-			imageListFragment.selectImage(mImageResourceId);
-		}
-		if (imagePagerFragment != null && imagePagerFragment.isResumed()) {
-			imagePagerFragment.selectImage(mImageResourceId);
-		}
+			// Get the fragment manager for this fragment's children
+			FragmentManager fragmentManager = getChildFragmentManager();
+			ImageListFragment imageListFragment = (ImageListFragment) fragmentManager.findFragmentByTag(ImageListFragment.class.getName());
+			ImagePagerFragment imagePagerFragment = (ImagePagerFragment) fragmentManager.findFragmentByTag(ImagePagerFragment.class.getName());
 
-		// Notify our parent listener that an image was selected
-		if (mOnImageSelectedListener != null) {
-			mOnImageSelectedListener.onImageSelected(imageItem, position);
+			// If the fragments are in the current layout, have them select the
+			// current image
+			if (imageListFragment != null) {
+				imageListFragment.setImageSelected(imageItem, position);
+			}
+			if (imagePagerFragment != null) {
+				imagePagerFragment.setImageSelected(imageItem, position);
+			}
+
+			// Notify the parent listener that an image was selected
+			if (mOnImageSelectedListener != null) {
+				mOnImageSelectedListener.onImageSelected(imageItem, position);
+			}
+
 		}
 	}
 }

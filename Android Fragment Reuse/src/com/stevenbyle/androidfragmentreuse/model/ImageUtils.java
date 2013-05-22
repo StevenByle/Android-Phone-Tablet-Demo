@@ -3,7 +3,6 @@ package com.stevenbyle.androidfragmentreuse.model;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 /**
  * Image utility class for image manipulations.
@@ -58,9 +57,11 @@ public class ImageUtils {
 			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
 		}
 
+		/*
 		Log.i(TAG, "calculateInSampleSize: imageHeight = " + imageHeight + " imageWidth = " + imageWidth
 				+ " reqWidth = " + reqWidth + " reqHeight = " + reqHeight
 				+ " inSampleSize = " + inSampleSize);
+		 */
 
 		return inSampleSize;
 	}

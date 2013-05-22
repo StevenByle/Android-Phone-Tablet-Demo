@@ -1,12 +1,8 @@
 package com.stevenbyle.androidfragmentreuse.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.stevenbyle.androidfragmentreuse.R;
 
 public class StaticData {
-	private static List<ImageItem> mImageItemList;
 	private static ImageItem[] mImageItemArray;
 
 	private static int[] imageResIds = {R.drawable.android,
@@ -23,18 +19,6 @@ public class StaticData {
 		"Adobe Photoshop", "Adobe Stock Photos", "Adobe Suite CS2",
 		"Globe", "Hamburger", "Note Pad", "Play", "Sun", "Linux Tux",
 	"Yawn"};
-
-	private static List<ImageItem> getImageItemListInstance() {
-		if (mImageItemList == null) {
-			mImageItemList = new ArrayList<ImageItem>();
-
-			for (int i = 0; i < imageResIds.length; i++) {
-				ImageItem imageItem = new ImageItem(imageTitles[i], imageResIds[i]);
-				mImageItemList.add(imageItem);
-			}
-		}
-		return mImageItemList;
-	}
 
 	/**
 	 * @return static instance of the image item array

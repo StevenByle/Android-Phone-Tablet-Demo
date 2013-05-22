@@ -11,15 +11,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.stevenbyle.androidfragmentreuse.R;
+import com.stevenbyle.androidfragmentreuse.controller.ImageSelector;
 import com.stevenbyle.androidfragmentreuse.controller.OnImageSelectedListener;
+import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
-public class ImagePagerFragment extends Fragment implements OnPageChangeListener {
+/**
+ * Fragment to show images in a horizontally swiping pager, allowing the user to
+ * select images.
+ * 
+ * @author Steven Byle
+ */
+public class ImagePagerFragment extends Fragment implements OnPageChangeListener, ImageSelector {
 	private static final String TAG = ImagePagerFragment.class.getSimpleName();
 
 	private ViewPager mViewPager;
 	private ImagePagerAdapter mImagePagerAdapter;
 	private OnImageSelectedListener mOnImageSelectedListener;
+	private ImageItem[] mPagerImageItems;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -48,19 +57,20 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.v(TAG, "onCreate");
+		Log.v(TAG, "onCreate: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		Log.v(TAG, "onCreateView");
+		Log.v(TAG, "onCreateView: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
 
 		// Inflate the fragment main view in the container provided
 		View v = inflater.inflate(R.layout.fragment_image_pager, container, false);
 
 		// Setup views
 		mViewPager = (ViewPager) v.findViewById(R.id.fragment_image_pager_viewpager);
-		mImagePagerAdapter = new ImagePagerAdapter(StaticData.getImageItemArrayInstance());
+		mPagerImageItems = StaticData.getImageItemArrayInstance();
+		mImagePagerAdapter = new ImagePagerAdapter(mPagerImageItems);
 		mViewPager.setAdapter(mImagePagerAdapter);
 
 		// Listen for page changes to update other views
@@ -143,24 +153,23 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 
 		// Inform our parent listener that an image was selected
 		if (mOnImageSelectedListener != null) {
-			mOnImageSelectedListener.onImageSelected(StaticData.getImageItemArrayInstance()[position], position);
+			mOnImageSelectedListener.onImageSelected(mPagerImageItems[position], position);
 		}
 	}
 
-	/**
-	 * Set the view pager to scroll to an image resource, if the image is in the pager.
-	 * 
-	 * @param position
-	 *            image position to scroll to
-	 */
-	public void selectImage(int position) {
-		Log.d(TAG, "selectImage: position = " + position);
+	@Override
+	public void setImageSelected(ImageItem imageItem, int position) {
+		Log.d(TAG, "setImageSelected: title = " + imageItem.getTitle() + " position = " + position);
 
-		// If the selected position is valid, move the pager to that image
-		if (position >= 0 && position <  mImagePagerAdapter.getCount()) {
+		if (isResumed()) {
+			// If the selected position is valid, and different than what is
+			// currently selected, move the pager to that image
+			if (position >= 0 && position < mImagePagerAdapter.getCount()
+					&& position != mViewPager.getCurrentItem()) {
 
-			// Move the view pager to the current image
-			mViewPager.setCurrentItem(position, true);
+				// Move the view pager to the current image
+				mViewPager.setCurrentItem(position, true);
+			}
 		}
 	}
 

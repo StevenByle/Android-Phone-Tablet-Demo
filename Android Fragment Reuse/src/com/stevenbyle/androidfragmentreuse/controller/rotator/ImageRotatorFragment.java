@@ -1,6 +1,8 @@
 package com.stevenbyle.androidfragmentreuse.controller.rotator;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,46 +16,57 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import com.stevenbyle.androidfragmentreuse.R;
+import com.stevenbyle.androidfragmentreuse.controller.ImageSelector;
+import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
-public class ImageRotatorFragment extends Fragment {
+/**
+ * Fragment to display a selected image and allow the user to adjust and
+ * transform it using slider controls.
+ * 
+ * @author Steven Byle
+ */
+public class ImageRotatorFragment extends Fragment implements ImageSelector {
 	private static final String TAG = ImageRotatorFragment.class.getSimpleName();
-	private static final String FULL_CLASSPATH = ImageRotatorFragment.class.getName();
 
 	// Passed in argument keys
+	private static final String FULL_CLASSPATH = ImageRotatorFragment.class.getName();
 	private static final String KEY_ARG_IMAGE_RES_ID = FULL_CLASSPATH + ".KEY_ARG_IMAGE_RES_ID";
 
 	// State keys
 	private static final String KEY_STATE_IMAGE_RES_ID = "KEY_STATE_IMAGE_RES_ID";
-	private static final String KEY_STATE_SCALE_X_PERCENT = "KEY_STATE_SCALE_X_PERCENT";
-	private static final String KEY_STATE_SCALE_Y_PERCENT = "KEY_STATE_SCALE_Y_PERCENT";
+	private static final String KEY_STATE_TRANS_X_PERCENT = "KEY_STATE_TRANS_X_PERCENT";
+	private static final String KEY_STATE_TRANS_Y_PERCENT = "KEY_STATE_TRANS_Y_PERCENT";
 
 	private ImageView mImageView;
 	private int mImageResourceId;
 	private Boolean mInitialCreate;
-	private double mScaleXPercent, mScaleYPercent;
+	private double mTransXPercent, mTransYPercent;
 
-	public ImageRotatorFragment() {
-		super();
-		Log.v(TAG, "ImageRotatorFragment()");
-	}
-
+	/**
+	 * Convenience method for creating an ImageRotatorFragment without needing
+	 * to know any bundle keys
+	 * 
+	 * @param imageResourceId
+	 *            default image resource to show
+	 * @return a new instance of ImageRotatorFragment with args set in the bundle
+	 */
 	public static ImageRotatorFragment newInstance(int imageResourceId) {
 		Log.v(TAG, "newInstance: imageResourceId = " + imageResourceId);
 
-		// Craete a new fragment instance
-		ImageRotatorFragment imageRotatorFragment = new ImageRotatorFragment();
+		// Create a new fragment instance
+		ImageRotatorFragment newImageRotatorFragment = new ImageRotatorFragment();
 
 		// Get arguments passed in, if any
-		Bundle args = imageRotatorFragment.getArguments();
+		Bundle args = newImageRotatorFragment.getArguments();
 		if (args == null) {
 			args = new Bundle();
 		}
 		// Add parameters to the argument bundle
 		args.putInt(KEY_ARG_IMAGE_RES_ID, imageResourceId);
-		imageRotatorFragment.setArguments(args);
+		newImageRotatorFragment.setArguments(args);
 
-		return imageRotatorFragment;
+		return newImageRotatorFragment;
 	}
 
 	@Override
@@ -65,27 +78,28 @@ public class ImageRotatorFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.v(TAG, "onCreate");
+		Log.v(TAG, "onCreate: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
 
 		// Set incoming parameters
 		Bundle args = getArguments();
 		if (args != null) {
 			mImageResourceId = args.getInt(KEY_ARG_IMAGE_RES_ID, -1);
 		}
+		// Otherwise, default parameters
 		else {
 			// Default image resource to the first image
 			mImageResourceId = StaticData.getImageItemArrayInstance()[0].getImageResId();
 		}
 
-		Log.i(TAG, "onCreate: mImageResourceId = " + mImageResourceId);
-
 		// Restore state, overwriting any passed in parameters
 		if (savedInstanceState != null) {
 			mInitialCreate = false;
+
 			mImageResourceId = savedInstanceState.getInt(KEY_STATE_IMAGE_RES_ID);
-			mScaleXPercent = savedInstanceState.getDouble(KEY_STATE_SCALE_X_PERCENT);
-			mScaleYPercent = savedInstanceState.getDouble(KEY_STATE_SCALE_Y_PERCENT);
+			mTransXPercent = savedInstanceState.getDouble(KEY_STATE_TRANS_X_PERCENT);
+			mTransYPercent = savedInstanceState.getDouble(KEY_STATE_TRANS_Y_PERCENT);
 		}
+		// Otherwise, default state
 		else {
 			mInitialCreate = true;
 		}
@@ -104,6 +118,7 @@ public class ImageRotatorFragment extends Fragment {
 
 		final View rotatingView = mImageView;
 
+		// Allow the user to translate (move) the image
 		final SeekBar seekBarTransX = (SeekBar) v.findViewById(R.id.fragment_image_rotator_seekbar_translation_x);
 		seekBarTransX.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
@@ -116,11 +131,12 @@ public class ImageRotatorFragment extends Fragment {
 
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				mScaleXPercent = (double) progress / seekBar.getMax();
+				mTransXPercent = (double) progress / seekBar.getMax();
 				rotatingView.setTranslationX(progress);
 			}
 		});
 
+		// Allow the user to translate (move) the image
 		final SeekBar seekBarTransY = (SeekBar) v.findViewById(R.id.fragment_image_rotator_seekbar_translation_y);
 		seekBarTransY.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -134,41 +150,60 @@ public class ImageRotatorFragment extends Fragment {
 
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				mScaleYPercent = (double) progress / seekBar.getMax();
+				mTransYPercent = (double) progress / seekBar.getMax();
 				rotatingView.setTranslationY(progress);
 			}
 		});
 
-		// Set the scale seekbars based on the available space to move
+		// Set the scale seek bars based on the available space to move, must
+		// wait until the views are drawn before dimensions can be computed
 		final ViewTreeObserver viewTreeObserver = v.getViewTreeObserver();
 		if (viewTreeObserver.isAlive()) {
 			viewTreeObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+
+				@SuppressWarnings("deprecation")
+				@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 				@Override
 				public void onGlobalLayout() {
-					v.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+					// Remove the listener
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+						v.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+					}
+					else {
+						v.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+					}
 					LinearLayout seekBarLinearLayout = (LinearLayout) v.findViewById(R.id.fragment_image_rotator_seekbar_root_linear_layout);
 					ImageView rotatingImage = (ImageView) v.findViewById(R.id.fragment_image_rotator_imageview_rotate);
 
+					// Compute the amount of space the image can be moved (origin at top,left)
 					int availableWidth = getView().getWidth() - rotatingImage.getWidth();
 					int availableHeight = v.getHeight() - seekBarLinearLayout.getHeight() - rotatingImage.getHeight();
 
+					// Set the seek bars to have a max of the available space
 					seekBarTransX.setMax(availableWidth);
 					seekBarTransY.setMax(availableHeight);
 
-					// If first run, center the image in the available space
-					if (mInitialCreate) {
+					// If provided, restore the slider's translation based on
+					// the positional percentage
+					if (savedInstanceState != null) {
+						mTransXPercent = savedInstanceState.getDouble(KEY_STATE_TRANS_X_PERCENT);
+						mTransYPercent = savedInstanceState.getDouble(KEY_STATE_TRANS_Y_PERCENT);
+					}
+					// Otherwise, if first creation, center the image
+					else if (mInitialCreate) {
 						mInitialCreate = false;
-						seekBarTransX.setProgress(availableWidth / 2);
-						seekBarTransY.setProgress(availableHeight / 2);
+
+						// Default the translation to the center of the screen
+						mTransXPercent = 0.50;
+						mTransYPercent = 0.50;
 					}
-					// Otherwise, restore the image based on the position's
-					// percentage
-					else {
-						mScaleXPercent = savedInstanceState.getDouble(KEY_STATE_SCALE_X_PERCENT);
-						mScaleYPercent = savedInstanceState.getDouble(KEY_STATE_SCALE_Y_PERCENT);
-						seekBarTransX.setProgress((int) Math.round(mScaleXPercent * availableWidth));
-						seekBarTransY.setProgress((int) Math.round(mScaleYPercent * availableHeight));
-					}
+
+					Log.w(TAG, "mTransXPercent = " + mTransXPercent
+							+ " mTransYPercent = " + mTransYPercent);
+
+					// Restore the slider's translation based on the last known percentage
+					seekBarTransX.setProgress((int) Math.round(mTransXPercent * seekBarTransX.getMax()));
+					seekBarTransY.setProgress((int) Math.round(mTransYPercent * seekBarTransY.getMax()));
 				}
 			});
 		}
@@ -316,8 +351,8 @@ public class ImageRotatorFragment extends Fragment {
 		Log.v(TAG, "onSaveInstanceState");
 
 		outState.putInt(KEY_STATE_IMAGE_RES_ID, mImageResourceId);
-		outState.putDouble(KEY_STATE_SCALE_X_PERCENT, mScaleXPercent);
-		outState.putDouble(KEY_STATE_SCALE_Y_PERCENT, mScaleYPercent);
+		outState.putDouble(KEY_STATE_TRANS_X_PERCENT, mTransXPercent);
+		outState.putDouble(KEY_STATE_TRANS_Y_PERCENT, mTransYPercent);
 	}
 
 	@Override
@@ -338,14 +373,13 @@ public class ImageRotatorFragment extends Fragment {
 		Log.v(TAG, "onDestroy");
 	}
 
-	/**
-	 * Method to change the rotating view from a parent fragment or activity.
-	 * 
-	 * @param imageResourceId
-	 */
-	public void setRotatingImageResourceId(int imageResourceId) {
-		Log.i(TAG, "setRotatingImageResourceId: imageResourceId = " + imageResourceId);
-		mImageResourceId = imageResourceId;
-		mImageView.setImageResource(mImageResourceId);
+	@Override
+	public void setImageSelected(ImageItem imageItem, int position) {
+		Log.d(TAG, "setImageSelected: title = " + imageItem.getTitle() + " position = " + position);
+
+		if (isResumed()) {
+			mImageResourceId = imageItem.getImageResId();
+			mImageView.setImageResource(mImageResourceId);
+		}
 	}
 }

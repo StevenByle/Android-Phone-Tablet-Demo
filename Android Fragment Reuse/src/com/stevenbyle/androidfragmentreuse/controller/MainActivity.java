@@ -1,7 +1,6 @@
 package com.stevenbyle.androidfragmentreuse.controller;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,6 +12,11 @@ import com.stevenbyle.androidfragmentreuse.controller.rotator.ImageRotatorFragme
 import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
+/**
+ * Main activity to host the entire application.
+ * 
+ * @author Steven Byle
+ */
 public class MainActivity extends FragmentActivity implements OnImageSelectedListener {
 	private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -21,12 +25,17 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.v(TAG, "onCreate");
+		Log.v(TAG, "onCreate: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
 
 		setContentView(R.layout.activity_main);
 
+		// Restore state
+		if (savedInstanceState != null) {
+			// The fragment manager will handle restoring them if we are being
+			// restored from a saved state
+		}
 		// If this is the first creation of the activity, add fragments to it
-		if (savedInstanceState == null) {
+		else {
 
 			// If our layout has a container for the image selector fragment,
 			// add it
@@ -34,7 +43,7 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 			if (mImageSelectorLayout != null) {
 				Log.i(TAG, "onCreate: adding ImageSelectorFragment to MainActivity");
 
-				// Add fragment to the activity's container layout
+				// Add image selector fragment to the activity's container layout
 				ImageSelectorFragment imageSelectorFragment = new ImageSelectorFragment();
 				FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 				fragmentTransaction.replace(mImageSelectorLayout.getId(), imageSelectorFragment, ImageSelectorFragment.class.getName());
@@ -49,7 +58,7 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 			if (mImageRotatorLayout != null) {
 				Log.i(TAG, "onCreate: adding ImageRotatorFragment to MainActivity");
 
-				// Add fragment to the activity's container layout
+				// Add image rotator fragment to the activity's container layout
 				ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(StaticData.getImageItemArrayInstance()[0].getImageResId());
 				FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 				fragmentTransaction.replace(mImageRotatorLayout.getId(), imageRotatorFragment, ImageRotatorFragment.class.getName());
@@ -58,10 +67,7 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 				fragmentTransaction.commit();
 			}
 		}
-		else {
-			// The fragment manager will handle restoring them if we are being
-			// restored from a saved state
-		}
+
 	}
 
 	@Override
@@ -102,19 +108,15 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 
 	@Override
 	public void onImageSelected(ImageItem imageItem, int position) {
-		Log.d(TAG, "onImageSelected:  title = " + imageItem.getTitle() + " position = " + position);
+		Log.d(TAG, "onImageSelected: title = " + imageItem.getTitle() + " position = " + position);
 
 		FragmentManager fragmentManager = getSupportFragmentManager();
-		Fragment imageRotatorFragment = fragmentManager.findFragmentByTag(ImageRotatorFragment.class.getName());
+		ImageRotatorFragment imageRotatorFragment = (ImageRotatorFragment) fragmentManager.findFragmentByTag(ImageRotatorFragment.class.getName());
 
-		// If our rotating fragment is in our current layout, update its
-		// image
+		// If the rotating fragment is in the current layout, and resumed, update its
+		// selected image
 		if (imageRotatorFragment != null) {
-
-			// Only interact with fragments that are resumed
-			if (imageRotatorFragment.isResumed()) {
-				((ImageRotatorFragment) imageRotatorFragment).setRotatingImageResourceId(imageItem.getImageResId());
-			}
+			imageRotatorFragment.setImageSelected(imageItem, position);
 		}
 	}
 

@@ -3,7 +3,6 @@ package com.stevenbyle.androidfragmentreuse.controller.list;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,13 @@ import com.stevenbyle.androidfragmentreuse.R;
 import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 import com.stevenbyle.androidfragmentreuse.model.ImageUtils;
 
+/**
+ * Adapter to bind image items to the list view.
+ * 
+ * @author Steven Byle
+ */
 public class ImageItemArrayAdapter extends ArrayAdapter<ImageItem> {
-	private static final String TAG = ImageItemArrayAdapter.class.getSimpleName();
+	//private static final String TAG = ImageItemArrayAdapter.class.getSimpleName();
 
 	private final int mLayoutResourceId;
 
@@ -33,6 +37,8 @@ public class ImageItemArrayAdapter extends ArrayAdapter<ImageItem> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
+		// Only load views if the convertView isn't being recycled, otherwise
+		// just get the view holder
 		final ImageItemViewHolder holder;
 		if (convertView == null) {
 			LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -47,21 +53,23 @@ public class ImageItemArrayAdapter extends ArrayAdapter<ImageItem> {
 			holder = (ImageItemViewHolder) convertView.getTag();
 		}
 
+		// Pull out the relevant data to bind to the views
 		ImageItem imageItem = getItem(position);
 		String title = imageItem.getTitle();
 		int imageResId = imageItem.getImageResId();
 
-		// Get a smaller version of the image to display in the list, less memory usage
+		// Get a smaller version of the image to display in the list for less memory usage
 		Resources res = getContext().getResources();
 		int dimensInPixels = res.getDimensionPixelSize(R.dimen.list_row_image_item_dimensions);
 		Bitmap sampledBitmap = ImageUtils.decodeSampledBitmapFromResource(getContext().getResources(),
 				imageResId, dimensInPixels, dimensInPixels);
 
-
+		/*
 		Log.i(TAG, "getView: sampledBitmap.getWidth() = " + sampledBitmap.getWidth()
 				+ " sampledBitmap.getHeight() = " + sampledBitmap.getHeight());
+		 */
 
-
+		// Update the views
 		holder.titleText.setText(title);
 		holder.imageView.setImageBitmap(sampledBitmap);
 

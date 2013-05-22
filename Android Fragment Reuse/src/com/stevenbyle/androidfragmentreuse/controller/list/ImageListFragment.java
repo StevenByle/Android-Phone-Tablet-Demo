@@ -13,11 +13,17 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.stevenbyle.androidfragmentreuse.R;
+import com.stevenbyle.androidfragmentreuse.controller.ImageSelector;
 import com.stevenbyle.androidfragmentreuse.controller.OnImageSelectedListener;
 import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 import com.stevenbyle.androidfragmentreuse.model.StaticData;
 
-public class ImageListFragment extends Fragment implements OnItemClickListener {
+/**
+ * Fragment to show the images in a list and allow selections.
+ * 
+ * @author Steven Byle
+ */
+public class ImageListFragment extends Fragment implements OnItemClickListener, ImageSelector {
 	private static final String TAG = ImageListFragment.class.getSimpleName();
 
 	private ListView mListView;
@@ -52,20 +58,20 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.v(TAG, "onCreate");
+		Log.v(TAG, "onCreate: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
 
-		// Keep track if this is the initial creation of the fragment
-		if (savedInstanceState == null) {
-			mInitialCreate = true;
+		// Track if this is the initial creation of the fragment
+		if (savedInstanceState != null) {
+			mInitialCreate = false;
 		}
 		else {
-			mInitialCreate = false;
+			mInitialCreate = true;
 		}
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		Log.v(TAG, "onCreateView");
+		Log.v(TAG, "onCreateView: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
 
 		// Inflate the fragment main view in the container provided
 		View v = inflater.inflate(R.layout.fragment_image_list, container, false);
@@ -74,18 +80,18 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 		mListView = (ListView) v.findViewById(R.id.fragment_image_list_listview);
 		mListView.setOnItemClickListener(this);
 
-		// Set an adapter to bind the iamge items to the list
-		mImageItemArrayAdapter = new ImageItemArrayAdapter(getActivity(), R.layout.list_row_image_items, StaticData.getImageItemArrayInstance());
+		// Set an adapter to bind the image items to the list
+		mImageItemArrayAdapter = new ImageItemArrayAdapter(getActivity(),
+				R.layout.list_row_image_items, StaticData.getImageItemArrayInstance());
 		mListView.setAdapter(mImageItemArrayAdapter);
 
-		// Set list view to highlight when item is pressed
+		// Set list view to highlight when an item is pressed
 		mListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
-		// If first creation of fragment, select the first image
+		// If first creation of fragment, select the first item
 		if (mInitialCreate && mImageItemArrayAdapter.getCount() > 0) {
-			mInitialCreate = false;
 
-			// Highlight the selected row
+			// Default the selection to the first item
 			mListView.setItemChecked(0, true);
 		}
 
@@ -172,22 +178,21 @@ public class ImageListFragment extends Fragment implements OnItemClickListener {
 		}
 	}
 
-	/**
-	 * Set the list to highlight an image resource, if the image is in the list.
-	 * 
-	 * @param position
-	 *            list position to scroll to
-	 */
-	public void selectImage(int position) {
-		Log.d(TAG, "selectImage: position = " + position);
+	@Override
+	public void setImageSelected(ImageItem imageItem, int position) {
+		Log.d(TAG, "setImageSelected: title = " + imageItem.getTitle() + " position = " + position);
 
-		// If the selected position is valid, highlight that row in the list and
-		// scroll to it
-		if (position >= 0 && position < mImageItemArrayAdapter.getCount()) {
+		if (isResumed()) {
+			// If the selected position is valid, and different than what is
+			// currently selected, highlight that row in the list and
+			// scroll to it
+			if (position >= 0 && position < mImageItemArrayAdapter.getCount()
+					&& position != mListView.getCheckedItemPosition()) {
 
-			// Highlight the selected row and scroll to it
-			mListView.setItemChecked(position, true);
-			mListView.smoothScrollToPosition(position);
+				// Highlight the selected row and scroll to it
+				mListView.setItemChecked(position, true);
+				mListView.smoothScrollToPosition(position);
+			}
 		}
 	}
 
