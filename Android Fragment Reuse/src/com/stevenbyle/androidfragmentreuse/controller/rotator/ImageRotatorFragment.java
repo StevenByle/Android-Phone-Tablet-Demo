@@ -1,5 +1,7 @@
 package com.stevenbyle.androidfragmentreuse.controller.rotator;
 
+
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
@@ -49,7 +51,8 @@ public class ImageRotatorFragment extends Fragment implements ImageSelector {
 	 * 
 	 * @param imageResourceId
 	 *            default image resource to show
-	 * @return a new instance of ImageRotatorFragment with args set in the bundle
+	 * @return a new instance of ImageRotatorFragment with args set in the
+	 *         bundle
 	 */
 	public static ImageRotatorFragment newInstance(int imageResourceId) {
 		Log.v(TAG, "newInstance: imageResourceId = " + imageResourceId);
@@ -175,7 +178,8 @@ public class ImageRotatorFragment extends Fragment implements ImageSelector {
 					LinearLayout seekBarLinearLayout = (LinearLayout) v.findViewById(R.id.fragment_image_rotator_seekbar_root_linear_layout);
 					ImageView rotatingImage = (ImageView) v.findViewById(R.id.fragment_image_rotator_imageview_rotate);
 
-					// Compute the amount of space the image can be moved (origin at top,left)
+					// Compute the amount of space the image can be moved
+					// (origin at top,left)
 					int availableWidth = getView().getWidth() - rotatingImage.getWidth();
 					int availableHeight = v.getHeight() - seekBarLinearLayout.getHeight() - rotatingImage.getHeight();
 
@@ -198,10 +202,8 @@ public class ImageRotatorFragment extends Fragment implements ImageSelector {
 						mTransYPercent = 0.50;
 					}
 
-					Log.w(TAG, "mTransXPercent = " + mTransXPercent
-							+ " mTransYPercent = " + mTransYPercent);
-
-					// Restore the slider's translation based on the last known percentage
+					// Restore the slider's translation based on the last known
+					// percentage
 					seekBarTransX.setProgress((int) Math.round(mTransXPercent * seekBarTransX.getMax()));
 					seekBarTransY.setProgress((int) Math.round(mTransYPercent * seekBarTransY.getMax()));
 				}

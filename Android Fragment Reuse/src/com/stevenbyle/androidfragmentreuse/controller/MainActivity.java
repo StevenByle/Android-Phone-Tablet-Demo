@@ -1,5 +1,6 @@
 package com.stevenbyle.androidfragmentreuse.controller;
 
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -48,7 +49,8 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 				// Add image selector fragment to the activity's container layout
 				ImageSelectorFragment imageSelectorFragment = new ImageSelectorFragment();
 				FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-				fragmentTransaction.replace(mImageSelectorLayout.getId(), imageSelectorFragment, ImageSelectorFragment.class.getName());
+				fragmentTransaction.replace(mImageSelectorLayout.getId(), imageSelectorFragment,
+						ImageSelectorFragment.class.getName());
 
 				// Commit the transaction
 				fragmentTransaction.commit();
@@ -61,9 +63,11 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 				Log.i(TAG, "onCreate: adding ImageRotatorFragment to MainActivity");
 
 				// Add image rotator fragment to the activity's container layout
-				ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(StaticImageData.getImageItemArrayInstance()[0].getImageResId());
+				ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(
+						StaticImageData.getImageItemArrayInstance()[0].getImageResId());
 				FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-				fragmentTransaction.replace(mImageRotatorLayout.getId(), imageRotatorFragment, ImageRotatorFragment.class.getName());
+				fragmentTransaction.replace(mImageRotatorLayout.getId(), imageRotatorFragment,
+						ImageRotatorFragment.class.getName());
 
 				// Commit the transaction
 				fragmentTransaction.commit();
@@ -113,7 +117,8 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 		Log.d(TAG, "onImageSelected: title = " + imageItem.getTitle() + " position = " + position);
 
 		FragmentManager fragmentManager = getSupportFragmentManager();
-		ImageRotatorFragment imageRotatorFragment = (ImageRotatorFragment) fragmentManager.findFragmentByTag(ImageRotatorFragment.class.getName());
+		ImageRotatorFragment imageRotatorFragment = (ImageRotatorFragment) fragmentManager.findFragmentByTag(
+				ImageRotatorFragment.class.getName());
 
 		// If the rotating fragment is in the current layout, and resumed, update its
 		// selected image

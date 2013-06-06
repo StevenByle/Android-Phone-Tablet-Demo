@@ -1,165 +1,160 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_image_rotator_root_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:splitMotionEvents="true" >
 
     <LinearLayout
+        android:id="@+id/fragment_image_rotator_seekbar_root_linear_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:splitMotionEvents="true" >
 
         <LinearLayout
-            android:id="@+id/fragment_image_rotator_seekbar_root_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginTop="20dip"
+            android:orientation="horizontal"
             android:splitMotionEvents="true" >
 
-            <LinearLayout
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip"
+                android:text="TX"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/fragment_image_rotator_seekbar_translation_x"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dip"
-                android:orientation="horizontal"
-                android:splitMotionEvents="true" >
+                android:layout_weight="1"
+                android:orientation="horizontal" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="5dip"
-                    android:paddingRight="5dip"
-                    android:text="TX"
-                    android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="5dip"
+                android:text="TY"
+                android:textStyle="bold" />
 
-                <SeekBar
-                    android:id="@+id/fragment_image_rotator_seekbar_translation_x"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="15dip"
-                    android:paddingRight="5dip"
-                    android:text="TY"
-                    android:textStyle="bold" />
-
-                <SeekBar
-                    android:id="@+id/fragment_image_rotator_seekbar_translation_y"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal" />
-            </LinearLayout>
-
-            <LinearLayout
+            <SeekBar
+                android:id="@+id/fragment_image_rotator_seekbar_translation_y"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dip"
-                android:orientation="horizontal"
-                android:splitMotionEvents="true" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="5dip"
-                    android:paddingRight="5dip"
-                    android:text="SX"
-                    android:textStyle="bold" />
-
-                <SeekBar
-                    android:id="@+id/fragment_image_rotator_seekbar_scale_x"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="15dip"
-                    android:paddingRight="5dip"
-                    android:text="SY"
-                    android:textStyle="bold" />
-
-                <SeekBar
-                    android:id="@+id/fragment_image_rotator_seekbar_scale_y"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dip"
-                android:orientation="horizontal"
-                android:splitMotionEvents="true" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="5dip"
-                    android:paddingRight="5dip"
-                    android:text="RX"
-                    android:textStyle="bold" />
-
-                <SeekBar
-                    android:id="@+id/fragment_image_rotator_seekbar_rotation_x"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="15dip"
-                    android:paddingRight="5dip"
-                    android:text="RY"
-                    android:textStyle="bold" />
-
-                <SeekBar
-                    android:id="@+id/fragment_image_rotator_seekbar_rotation_y"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal" />
- 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="15dip"
-                    android:paddingRight="5dip"
-                    android:text="RZ"
-                    android:textStyle="bold" />
-
-                <SeekBar
-                    android:id="@+id/fragment_image_rotator_seekbar_rotation_z"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal" />
-            </LinearLayout>
+                android:layout_weight="1"
+                android:orientation="horizontal" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/fragment_image_rotator_imageview_rotate"
-            android:layout_width="@dimen/fragment_image_rotator_default_image_dimensions"
-            android:layout_height="@dimen/fragment_image_rotator_default_image_dimensions" 
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:orientation="horizontal"
+            android:splitMotionEvents="true" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip"
+                android:text="SX"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/fragment_image_rotator_seekbar_scale_x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="5dip"
+                android:text="SY"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/fragment_image_rotator_seekbar_scale_y"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:orientation="horizontal"
+            android:splitMotionEvents="true" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip"
+                android:text="RX"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/fragment_image_rotator_seekbar_rotation_x"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="5dip"
+                android:text="RY"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/fragment_image_rotator_seekbar_rotation_y"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="5dip"
+                android:text="RZ"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/fragment_image_rotator_seekbar_rotation_z"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" />
+        </LinearLayout>
     </LinearLayout>
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/fragment_image_rotator_imageview_rotate"
+        android:layout_width="@dimen/fragment_image_rotator_default_image_dimensions"
+        android:layout_height="@dimen/fragment_image_rotator_default_image_dimensions"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter" />
+
+</LinearLayout>

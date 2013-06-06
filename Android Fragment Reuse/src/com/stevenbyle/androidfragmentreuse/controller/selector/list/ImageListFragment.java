@@ -180,7 +180,6 @@ public class ImageListFragment extends Fragment implements OnItemClickListener, 
 
 	@Override
 	public void setImageSelected(ImageItem imageItem, int position) {
-		Log.d(TAG, "setImageSelected: title = " + imageItem.getTitle() + " position = " + position);
 
 		if (isResumed()) {
 			// If the selected position is valid, and different than what is
@@ -188,6 +187,7 @@ public class ImageListFragment extends Fragment implements OnItemClickListener, 
 			// scroll to it
 			if (position >= 0 && position < mImageArrayAdapter.getCount()
 					&& position != mListView.getCheckedItemPosition()) {
+				Log.d(TAG, "setImageSelected: title = " + imageItem.getTitle() + " position = " + position);
 
 				// Highlight the selected row and scroll to it
 				mListView.setItemChecked(position, true);

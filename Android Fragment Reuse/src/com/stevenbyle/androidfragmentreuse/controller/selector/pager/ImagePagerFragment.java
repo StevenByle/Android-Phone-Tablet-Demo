@@ -159,13 +159,13 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 
 	@Override
 	public void setImageSelected(ImageItem imageItem, int position) {
-		Log.d(TAG, "setImageSelected: title = " + imageItem.getTitle() + " position = " + position);
 
 		if (isResumed()) {
 			// If the selected position is valid, and different than what is
 			// currently selected, move the pager to that image
 			if (position >= 0 && position < mImagePagerAdapter.getCount()
 					&& position != mViewPager.getCurrentItem()) {
+				Log.d(TAG, "setImageSelected: title = " + imageItem.getTitle() + " position = " + position);
 
 				// Move the view pager to the current image
 				mViewPager.setCurrentItem(position, true);

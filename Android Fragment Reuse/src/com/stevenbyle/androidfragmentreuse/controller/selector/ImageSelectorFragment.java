@@ -238,11 +238,11 @@ public class ImageSelectorFragment extends Fragment implements OnImageSelectedLi
 
 	@Override
 	public void onImageSelected(ImageItem imageItem, int position) {
-		Log.d(TAG, "onImageSelected: title = " + imageItem.getTitle() + " position = " + position
-				+ (mCurImagePosition != position ? " new " : " redundant") + " update");
 
 		// Only inform the other fragments if the selected position is new
 		if (mCurImagePosition != position) {
+
+			Log.d(TAG, "onImageSelected: title = " + imageItem.getTitle() + " position = " + position);
 
 			// Keep track of the selected image
 			mCurImageResourceId = imageItem.getImageResId();
