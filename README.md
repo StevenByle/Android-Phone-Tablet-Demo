@@ -1,4 +1,4 @@
-Optimizing for Android Phones and Tablets 
+Optimizing for Android Phones and Tablets Example
 ------
 
 A example Android application to demonstrate optimizing the user interface for phones and tablets. This is a code example created for my blog post, Android Tutorial: Optimizing for Phones and Tablets, which explains the topic of Fragments and creating reusable, flexible user interfaces in depth. This project has a minimum requirement of Android 3.0 (API 11), in order to support 3D view rotations. However, the [Android Support Library](http://developer.android.com/tools/extras/support-library.html) supports back to Android 1.6 (API 4).
