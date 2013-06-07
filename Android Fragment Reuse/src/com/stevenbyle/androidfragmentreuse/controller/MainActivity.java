@@ -120,7 +120,7 @@ public class MainActivity extends FragmentActivity implements OnImageSelectedLis
 		ImageRotatorFragment imageRotatorFragment = (ImageRotatorFragment) fragmentManager.findFragmentByTag(
 				ImageRotatorFragment.class.getName());
 
-		// If the rotating fragment is in the current layout, and resumed, update its
+		// If the rotating fragment is in the current layout, update its
 		// selected image
 		if (imageRotatorFragment != null) {
 			imageRotatorFragment.setImageSelected(imageItem, position);

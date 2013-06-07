@@ -27,7 +27,7 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 
 	private ViewPager mViewPager;
 	private ImagePagerAdapter mImagePagerAdapter;
-	private OnImageSelectedListener mOnImageSelectedListener;
+	private OnImageSelectedListener mParentOnImageSelectedListener;
 	private ImageItem[] mPagerImageItems;
 
 	@Override
@@ -39,16 +39,16 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 		// selection interface
 		Fragment parentFragment = getParentFragment();
 		if (parentFragment != null && parentFragment instanceof OnImageSelectedListener) {
-			mOnImageSelectedListener = (OnImageSelectedListener) parentFragment;
+			mParentOnImageSelectedListener = (OnImageSelectedListener) parentFragment;
 		}
 		// Otherwise, check if parent activity implements the image
 		// selection interface
 		else if (activity != null && activity instanceof OnImageSelectedListener) {
-			mOnImageSelectedListener = (OnImageSelectedListener) activity;
+			mParentOnImageSelectedListener = (OnImageSelectedListener) activity;
 		}
 		// If neither implements the image selection callback, warn that
 		// selections are being missed
-		else if (mOnImageSelectedListener == null) {
+		else if (mParentOnImageSelectedListener == null) {
 			Log.w(TAG, "onAttach: niether the parent fragment or parent activity implement OnImageSelectedListener, "
 					+ "image selections will not be communicated to other components");
 		}
@@ -152,8 +152,8 @@ public class ImagePagerFragment extends Fragment implements OnPageChangeListener
 		Log.d(TAG, "onPageSelected: " + position);
 
 		// Inform our parent listener that an image was selected
-		if (mOnImageSelectedListener != null) {
-			mOnImageSelectedListener.onImageSelected(mPagerImageItems[position], position);
+		if (mParentOnImageSelectedListener != null) {
+			mParentOnImageSelectedListener.onImageSelected(mPagerImageItems[position], position);
 		}
 	}
 

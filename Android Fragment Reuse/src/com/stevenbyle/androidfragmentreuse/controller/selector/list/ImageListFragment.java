@@ -28,7 +28,7 @@ public class ImageListFragment extends Fragment implements OnItemClickListener, 
 
 	private ListView mListView;
 	private ImageArrayAdapter mImageArrayAdapter;
-	private OnImageSelectedListener mOnImageSelectedListener;
+	private OnImageSelectedListener mParentOnImageSelectedListener;
 	private Boolean mInitialCreate;
 
 	@Override
@@ -40,16 +40,16 @@ public class ImageListFragment extends Fragment implements OnItemClickListener, 
 		// selection interface
 		Fragment parentFragment = getParentFragment();
 		if (parentFragment != null && parentFragment instanceof OnImageSelectedListener) {
-			mOnImageSelectedListener = (OnImageSelectedListener) parentFragment;
+			mParentOnImageSelectedListener = (OnImageSelectedListener) parentFragment;
 		}
 		// Otherwise, check if parent activity implements the image
 		// selection interface
 		else if (activity != null && activity instanceof OnImageSelectedListener) {
-			mOnImageSelectedListener = (OnImageSelectedListener) activity;
+			mParentOnImageSelectedListener = (OnImageSelectedListener) activity;
 		}
 		// If neither implements the image selection callback, warn that
 		// selections are being missed
-		else if (mOnImageSelectedListener == null) {
+		else if (mParentOnImageSelectedListener == null) {
 			Log.w(TAG, "onAttach: niether the parent fragment or parent activity implement OnImageSelectedListener, "
 					+ "image selections will not be communicated to other components");
 		}
@@ -172,9 +172,9 @@ public class ImageListFragment extends Fragment implements OnItemClickListener, 
 		mListView.setItemChecked(position, true);
 
 		// Inform our parent listener that an image was selected
-		if (mOnImageSelectedListener != null) {
+		if (mParentOnImageSelectedListener != null) {
 			ImageItem imageItem = mImageArrayAdapter.getItem(position);
-			mOnImageSelectedListener.onImageSelected(imageItem, position);
+			mParentOnImageSelectedListener.onImageSelected(imageItem, position);
 		}
 	}
 
