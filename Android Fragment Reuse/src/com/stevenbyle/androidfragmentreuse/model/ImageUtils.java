@@ -21,7 +21,7 @@ public class ImageUtils {
 	 * @param resourceId
 	 * @param reqWidth
 	 * @param reqHeight
-	 * @return
+	 * @return bitmap sampled at equal to or larger than the requested dimensions
 	 */
 	public static Bitmap decodeSampledBitmapFromResource(Resources resources, int resourceId, int reqWidth, int reqHeight) {
 

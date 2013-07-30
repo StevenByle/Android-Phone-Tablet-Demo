@@ -1,5 +1,6 @@
 package com.stevenbyle.androidfragmentreuse.controller.selector.list;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.stevenbyle.androidfragmentreuse.R;
 import com.stevenbyle.androidfragmentreuse.model.ImageItem;
 import com.stevenbyle.androidfragmentreuse.model.ImageUtils;
+import com.stevenbyle.androidfragmentreuse.model.ThumbnailCache;
 
 /**
  * Adapter to bind image items to the list view.
@@ -20,9 +22,14 @@ import com.stevenbyle.androidfragmentreuse.model.ImageUtils;
  * @author Steven Byle
  */
 public class ImageArrayAdapter extends ArrayAdapter<ImageItem> {
-	//private static final String TAG = ImageItemArrayAdapter.class.getSimpleName();
+	//private static final String TAG = ImageArrayAdapter.class.getSimpleName();
 
 	private final int mLayoutResourceId;
+
+	/**
+	 * Static thumbnail cache to live through config changes (rotations)
+	 */
+	public static ThumbnailCache mThumbnailCache;
 
 	/**
 	 * @param context
@@ -32,6 +39,12 @@ public class ImageArrayAdapter extends ArrayAdapter<ImageItem> {
 	public ImageArrayAdapter(Context context, int layoutResourceId, ImageItem[] imageItems) {
 		super(context, layoutResourceId, imageItems);
 		mLayoutResourceId = layoutResourceId;
+
+		ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+		int memoryClassBytes = activityManager.getMemoryClass() * 1024 * 1024;
+		if(mThumbnailCache == null) {
+			mThumbnailCache = new ThumbnailCache(memoryClassBytes / 8);
+		}
 	}
 
 	@Override
@@ -58,20 +71,33 @@ public class ImageArrayAdapter extends ArrayAdapter<ImageItem> {
 		String title = imageItem.getTitle();
 		int imageResId = imageItem.getImageResId();
 
-		// Get a smaller version of the image to display in the list for less memory usage
-		Resources res = getContext().getResources();
-		int dimensInPixels = res.getDimensionPixelSize(R.dimen.list_row_image_item_dimensions);
-		Bitmap sampledBitmap = ImageUtils.decodeSampledBitmapFromResource(getContext().getResources(),
-				imageResId, dimensInPixels, dimensInPixels);
+		// Try looking in the memory cache first
+		Bitmap cachedBitmap = mThumbnailCache.get((long) imageResId);
+		Bitmap bitmapToSet = null;
 
-		/*
-		Log.i(TAG, "getView: sampledBitmap.getWidth() = " + sampledBitmap.getWidth()
-				+ " sampledBitmap.getHeight() = " + sampledBitmap.getHeight());
-		 */
+		if (cachedBitmap != null) {
+			bitmapToSet = cachedBitmap;
+			//Log.d(TAG, "getView: position = " + position + " - cache hit");
+		}
+		// Otherwise, load from storage and put in the cache
+		else {
+			// Get a smaller version of the image to display in the list for less memory usage
+			Resources res = getContext().getResources();
+			int dimensInPixels = res.getDimensionPixelSize(R.dimen.list_row_image_item_dimensions);
+			Bitmap sampledBitmap = ImageUtils.decodeSampledBitmapFromResource(getContext().getResources(),
+					imageResId, dimensInPixels, dimensInPixels);
+
+			// Store loaded thumbnail in cache
+			mThumbnailCache.put((long) imageResId, sampledBitmap);
+			bitmapToSet = sampledBitmap;
+
+			//Log.d(TAG, "getView: position = " + position + " - cache miss - sampledBitmap.getWidth() = " + sampledBitmap.getWidth()
+			//		+ " sampledBitmap.getHeight() = " + sampledBitmap.getHeight());
+		}
 
 		// Update the views
 		holder.titleText.setText(title);
-		holder.imageView.setImageBitmap(sampledBitmap);
+		holder.imageView.setImageBitmap(bitmapToSet);
 
 		return convertView;
 	}

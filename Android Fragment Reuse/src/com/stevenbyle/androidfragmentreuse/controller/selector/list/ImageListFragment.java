@@ -88,11 +88,11 @@ public class ImageListFragment extends Fragment implements OnItemClickListener, 
 		// Set list view to highlight when an item is pressed
 		mListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
-		// If first creation of fragment, select the first item
+		// If first creation of fragment, select the default item
 		if (mInitialCreate && mImageArrayAdapter.getCount() > 0) {
 
 			// Default the selection to the first item
-			mListView.setItemChecked(0, true);
+			mListView.setItemChecked(StaticImageData.DEFAULT_IMAGE_INDEX, true);
 		}
 
 		// Track that onCreateView has been called at least once since the
