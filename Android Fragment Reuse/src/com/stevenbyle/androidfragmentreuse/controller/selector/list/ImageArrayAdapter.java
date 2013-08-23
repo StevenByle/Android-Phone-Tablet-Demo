@@ -84,8 +84,8 @@ public class ImageArrayAdapter extends ArrayAdapter<ImageItem> {
 			// Get a smaller version of the image to display in the list for less memory usage
 			Resources res = getContext().getResources();
 			int dimensInPixels = res.getDimensionPixelSize(R.dimen.list_row_image_item_dimensions);
-			Bitmap sampledBitmap = ImageUtils.decodeSampledBitmapFromResource(getContext().getResources(),
-					imageResId, dimensInPixels, dimensInPixels);
+			Bitmap sampledBitmap = ImageUtils.decodeSampledBitmapFromResource(res, imageResId,
+					dimensInPixels, dimensInPixels);
 
 			// Store loaded thumbnail in cache
 			mThumbnailCache.put((long) imageResId, sampledBitmap);

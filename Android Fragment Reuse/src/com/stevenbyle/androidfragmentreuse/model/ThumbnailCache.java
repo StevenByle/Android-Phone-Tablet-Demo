@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.stevenbyle.androidfragmentreuse.model;
 
 import android.annotation.TargetApi;
