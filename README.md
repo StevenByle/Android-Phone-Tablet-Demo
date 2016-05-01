@@ -1,14 +1,10 @@
-Optimizing for Android Phones and Tablets Example
-
-
-An example Android application to demonstrate optimizing the user interface for phones and tablets. This is a code example created for my blog post, [Android Tutorial: Optimizing for Phones and Tablets with Fragments](http://blogs.captechconsulting.com/blog/steven-byle/android-tutorial-optimizing-phones-and-tablets-fragments), which explains the topic of <code>Fragments</code> and creating reusable, flexible user interfaces in depth. This project has a minimum requirement of Android 3.0 (API 11), in order to support 3D view rotations. However, the [Android Support Library](http://developer.android.com/tools/extras/support-library.html) supports back to Android 1.6 (API 4) and allows for <code>Fragment</code> based applications.
+#Optimizing for Phones and Tablets with Fragments
 
 <p align="center">
   <img src="Screenshots/Phone%20Layout%20Screenshots%20Port.png" width=800/>
   <img src="Screenshots/Phone%20Layout%20Screenshots%20Land.png" width=800/>
   <img src="Screenshots/Tablet%20Layout%20Screenshots.png" width=800/>
 </p>
-
 
 <h2>When Tablets Were Still Stone</h2><p>A long, long, time ago, when the Android framework was being developed in the mid-2000’s, modern mobile phone screens were still small, and mostly flip, slider, and candy bar form factors. Almost all input came from hardware buttons, as touch screens were just starting to make it into consumer products. With that in mind, the Android engineers designed a user interface framework that would be flexible enough to fit almost any screen size and aspect ratio, and adaptable enough to support a plethora of hardware configurations. However, the scope of Android at that time was focused around mobile phones, and large screen “tablet” devices were not even on the horizon yet. Actually, at that time, the term “tablet” was still used to reference what are now called “convertible laptops”.</p><h2>Activities and Views</h2><p>Android engineers ultimately came up with a relatively simple user interface framework. Layouts were based on Activities, which host View elements that the user can interact with. In an Model-View-Controller (MVC) architecture, an Activity acts as a Controller, while a View acts as (if it isn’t obvious) a View. User interface elements that user sees and interacts with are all Views: text, buttons, text fields, images, spinners, check boxes, switches, seek bars, lists, pagers, etc. Activities take those Views, arrange them into a screen layout, and manage their behavior as well as the application flow.</p><h2>Limitations of Activities</h2><p>While many things can be done with Activities, they have some limitations. Only a single Activity can be in a “resumed” state at a time, meaning the user can only interact with one Activity at a time. Activities also require control of the full screen when resumed, so Activities can’t share the screen with each other. However, Activities can be floating “dialog” windows and use transparency, but they still take focus of the entire screen, causing any visible Activities to be inactive.</p><p>So what’s the reason for these limitations? Well remember, early Android devices had very little RAM, as well as smaller screens. At the time, there were more performance detriments than gains if more than one Activity was allowed to be active at once. Also, there was little purpose of having multiple Activities on the screen at once. The same layout could suffice for every screen size, since those sizes didn’t vary much.<!--break-->
 
@@ -91,10 +87,8 @@ An example Android application to demonstrate optimizing the user interface for 
 
 <h3>Code Example: Adding Fragments at Runtime</h3>
 
-<p>The following code snippets <a href="https://gist.github.com/StevenByle/5729426">can be found on GitHub</a>.</p>
-
-<p>
-<blockcode title="(layout) activity_main.xml" lang="xml">
+*activity_main.xml (layout)*
+```xml
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -105,13 +99,11 @@ An example Android application to demonstrate optimizing the user interface for 
         android:id="@+id/activity_main_image_selector_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    
 </FrameLayout>
-</blockcode>
-</p>
+```
 
-<p>
-<blockcode title="(layout-sw600dp) activity_main.xml" lang="xml">
+*activity_main.xml (layout-sw600dp)*
+```xml
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main_root_container"
@@ -131,13 +123,11 @@ An example Android application to demonstrate optimizing the user interface for 
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="60" />
- 
 </LinearLayout>
-</blockcode>
-</p>
+```
 
-<p>
-<blockcode title="(layout-sw600dp-land) activity_main.xml" lang="xml">
+*activity_main.xml (layout-sw600dp-land)*
+```xml
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main_root_container"
@@ -157,17 +147,16 @@ An example Android application to demonstrate optimizing the user interface for 
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="60" />
- 
 </LinearLayout>
-</blockcode>
-</p>
+```
 
-<p>
-<blockcode title="MainActivity.onCreate().java" lang="java">
+*MainActivity.java*
+```java
 @Override
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Log.v(TAG, "onCreate: savedInstanceState " + (savedInstanceState == null ? "==" : "!=") + " null");
+    Log.v(TAG, "onCreate: savedInstanceState " 
+	    + (savedInstanceState == null ? "==" : "!=") + " null");
     
     setContentView(R.layout.activity_main);
  
@@ -181,13 +170,15 @@ protected void onCreate(Bundle savedInstanceState) {
     
         // If our layout has a container for the image selector fragment,
         // create and add it
-        mImageSelectorLayout = (ViewGroup) findViewById(R.id.activity_main_image_selector_container);
+        mImageSelectorLayout = 
+	        (ViewGroup) findViewById(R.id.activity_main_image_selector_container);
         if (mImageSelectorLayout != null) {
             Log.i(TAG, "onCreate: adding ImageSelectorFragment to MainActivity");
     
             // Add image selector fragment to the activity's container layout
             ImageSelectorFragment imageSelectorFragment = new ImageSelectorFragment();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = 
+	            getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(mImageSelectorLayout.getId(), imageSelectorFragment,
                     ImageSelectorFragment.class.getName());
     
@@ -213,8 +204,7 @@ protected void onCreate(Bundle savedInstanceState) {
         }
     }
 }
-</blockcode>
-</p>
+```
 
 <h2>Handling Fragment Communication</h2><p>While Fragments are standalone pieces of functionality that can operate on their own, they also should be modular, and able to work with other components of the user interface. Fragments must be able to communicate with other components of the application to relay events and information. As discussed in a earlier, an email app with a list Fragment must be able to inform the detail Fragment which email was selected so the detail Fragment can display the right email. Likewise, if the user swipes to the next email in the detail Fragment, it must inform the list Fragment to update which email is highlighted. To avoid coupling, this Fragment communication needs to be structured, and organized.</p>
 
@@ -243,10 +233,8 @@ protected void onCreate(Bundle savedInstanceState) {
 
 <h3>Code Example: Parent Handling Fragment Communication</h3>
 
-<p>The following code snippets <a href="https://gist.github.com/StevenByle/5729698">can be found on GitHub</a>.</p>
-
-<p>
-<blockcode title="ImageSelectorFragment.onImageSelected().java" lang="java">
+*ImageSelectorFragment.java*
+```java
 @Override
 public void onImageSelected(ImageItem imageItem, int position) {
  
@@ -280,11 +268,10 @@ public void onImageSelected(ImageItem imageItem, int position) {
  
     }
 }
-</blockcode> 
-</p>
+```
 
-<p>
-<blockcode title="OnImageSelectedListener.java" lang="java">
+*OnImageSelectedListener.java*
+```java
 public interface OnImageSelectedListener {
     
     /**
@@ -295,17 +282,14 @@ public interface OnImageSelectedListener {
      */
     public void onImageSelected(ImageItem imageItem, int position);
 } 
-</blockcode>
-</p>
+```
 
 <h2>Layout Dependent Actions</h2><p>Since Fragments are flexible, they provide the user more or less functionality depending on the device and its configuration. So when the user interface needs to take an action, it may require different steps to complete that action depending on the state of its Fragments. Controller code must be aware of the multiple states of the user interface, and take the appropriate action depending on that state.</p><ol><li>If a Fragment needed is not currently in the layout, create it and add it to the layout, or stack it on top if there is not enough room.</li><li>If a Fragment needed is optional (tablet only), and is not currently in the layout, ignore the update.</li><li>If a Fragment needed is currently in the layout, simply update it using an interface method.</li></ol>
 
 <h3>Code Example: Taking Layout Dependent Actions</h3>
 
-<p>The following code snippets <a href="https://gist.github.com/StevenByle/5729753">can be found on GitHub</a>.</p>
-
-<p>
-<blockcode title="ImageSelectorFragment.onOptionsItemSelected().java" lang="java">
+*ImageSelectorFragment.java*
+```java
 @Override
 public boolean onOptionsItemSelected(MenuItem item) {
     Log.d(TAG, "onOptionsItemSelected");
@@ -338,11 +322,10 @@ public boolean onOptionsItemSelected(MenuItem item) {
             return super.onOptionsItemSelected(item);
     }
 }
-</blockcode>
-</p>
+```
 
-<p>
-<blockcode title="MainActivity.onImageSelected().java" lang="java">
+*MainActivity.java*
+```java
 @Override
 public void onImageSelected(ImageItem imageItem, int position) {
     Log.d(TAG, "onImageSelected: title = " + imageItem.getTitle() + " position = " + position);
@@ -357,9 +340,7 @@ public void onImageSelected(ImageItem imageItem, int position) {
         imageRotatorFragment.setImageSelected(imageItem, position);
     }
 }
-</blockcode>
-</p>
-
+```
 
 <h2>Example Application</h2><p>While guidelines and code snippets are nice, only a working example application can really demonstrate these concepts.&nbsp;Consider an example application with some arbitrary requirements designed to highlight the topics covered so far. For instance, say the app should allow the user to view a set of images, and be able select those images to manipulate. The app should also optimize for any size display, in any orientation.</p>
 
@@ -448,9 +429,6 @@ public void onImageSelected(ImageItem imageItem, int position) {
 <p align="center"><img src="http://i.imgur.com/GYRU9YT.png" title="" width="550"></p>
 
 <p align="center"><img src="http://i.imgur.com/qnJooQV.png" title="" width="550"></p>
-
-<h2>Source Code</h2>
-<p>The <a href="https://github.com/StevenByle/AndroidPhoneTabletExample">full source of this example can be found on GitHub</a>, and can be downloaded in a <a href="https://github.com/StevenByle/AndroidPhoneTabletExample/archive/master.zip">zipped format</a>, and the .apk install file is also attached below.</p>
 
 <h2>Summary</h2><p>Fragments are powerful tools used for building dynamic, flexible, and optimized user interfaces for Android applications. However, an organized design and architecture is required to get the best use of Fragments.</p>
 
