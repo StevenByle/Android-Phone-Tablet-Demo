@@ -51,7 +51,7 @@
 	</li>
 	<li><strong>Use resource identifiers to optimize for different displays.</strong>
 		<ul>
-			<li>Provide alternate resources (images, font sizes, layouts, etc.) for different screen sizes, orientations, <a href="https://www.captechconsulting.com/blog/steven-byle/understanding-density-independence-android">and pixel densities</a>.</li>
+			<li>Provide alternate resources (images, font sizes, layouts, etc.) for different screen sizes, orientations, and <a href="https://github.com/StevenByle/Android-Density-Independence-Demo">pixel densities</a>.</li>
 		</ul>
 	</li>
 	<li><strong>Require the parent Activity (or parent Fragment) to manage all of its child Fragments’ communication.</strong>
@@ -83,128 +83,6 @@
 	</li>
 </ol>
 
-
-<h3>Code Example: Adding Fragments at Runtime</h3>
-
-*activity_main.xml (layout)*
-```xml
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/activity_main_root_container">
- 
-    <FrameLayout
-        android:id="@+id/activity_main_image_selector_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</FrameLayout>
-```
-
-*activity_main.xml (layout-sw600dp)*
-```xml
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main_root_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:baselineAligned="false"
-    android:orientation="vertical" >
- 
-    <FrameLayout
-        android:id="@+id/activity_main_image_selector_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="40" />
- 
-    <FrameLayout
-        android:id="@+id/activity_main_image_rotate_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="60" />
-</LinearLayout>
-```
-
-*activity_main.xml (layout-sw600dp-land)*
-```xml
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main_root_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:baselineAligned="false"
-    android:orientation="horizontal" >
- 
-    <FrameLayout
-        android:id="@+id/activity_main_image_selector_container"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="40" />
- 
-    <FrameLayout
-        android:id="@+id/activity_main_image_rotate_container"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="60" />
-</LinearLayout>
-```
-
-*MainActivity.java*
-```java
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    Log.v(TAG, "onCreate: savedInstanceState " 
-	    + (savedInstanceState == null ? "==" : "!=") + " null");
-    
-    setContentView(R.layout.activity_main);
- 
-    // Restore state
-    if (savedInstanceState != null) {
-        // The fragment manager will handle restoring them if we are being
-        // restored from a saved state
-    }
-    // If this is the first creation of the activity, add fragments to it
-    else {
-    
-        // If our layout has a container for the image selector fragment,
-        // create and add it
-        mImageSelectorLayout = 
-	        (ViewGroup) findViewById(R.id.activity_main_image_selector_container);
-        if (mImageSelectorLayout != null) {
-            Log.i(TAG, "onCreate: adding ImageSelectorFragment to MainActivity");
-    
-            // Add image selector fragment to the activity's container layout
-            ImageSelectorFragment imageSelectorFragment = new ImageSelectorFragment();
-            FragmentTransaction fragmentTransaction = 
-	            getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(mImageSelectorLayout.getId(), imageSelectorFragment,
-                    ImageSelectorFragment.class.getName());
-    
-            // Commit the transaction
-            fragmentTransaction.commit();
-        }
-    
-        // If our layout has a container for the image rotator fragment, create
-        // it and add it
-        mImageRotatorLayout = (ViewGroup) findViewById(R.id.activity_main_image_rotate_container);
-        if (mImageRotatorLayout != null) {
-            Log.i(TAG, "onCreate: adding ImageRotatorFragment to MainActivity");
-    
-            // Add image rotator fragment to the activity's container layout
-            ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(
-                    StaticImageData.getImageItemArrayInstance()[0].getImageResId());
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(mImageRotatorLayout.getId(), imageRotatorFragment,
-                    ImageRotatorFragment.class.getName());
-    
-            // Commit the transaction
-            fragmentTransaction.commit();
-        }
-    }
-}
-```
-
 <h2>Handling Fragment Communication</h2><p>While Fragments are standalone pieces of functionality that can operate on their own, they also should be modular, and able to work with other components of the user interface. Fragments must be able to communicate with other components of the application to relay events and information. As discussed in a earlier, an email app with a list Fragment must be able to inform the detail Fragment which email was selected so the detail Fragment can display the right email. Likewise, if the user swipes to the next email in the detail Fragment, it must inform the list Fragment to update which email is highlighted. To avoid coupling, this Fragment communication needs to be structured, and organized.</p>
 
 <ol>
@@ -229,117 +107,7 @@ protected void onCreate(Bundle savedInstanceState) {
 	</li>
 </ol>
 
-
-<h3>Code Example: Parent Handling Fragment Communication</h3>
-
-*ImageSelectorFragment.java*
-```java
-@Override
-public void onImageSelected(ImageItem imageItem, int position) {
- 
-    // Only inform the other fragments if the selected position is new
-    if (mCurImagePosition != position) {
- 
-        Log.d(TAG, "onImageSelected: title = " + imageItem.getTitle() + " position = " + position);
- 
-        // Keep track of the selected image
-        mCurImageResourceId = imageItem.getImageResId();
-        mCurImagePosition = position;
- 
-        // Get the fragment manager for this fragment's children
-        FragmentManager fragmentManager = getChildFragmentManager();
-        ImageListFragment imageListFragment = (ImageListFragment) fragmentManager.findFragmentByTag(ImageListFragment.class.getName());
-        ImagePagerFragment imagePagerFragment = (ImagePagerFragment) fragmentManager.findFragmentByTag(ImagePagerFragment.class.getName());
-        
-        // If the fragments are in the current layout, have them select the
-        // current image
-        if (imageListFragment != null) {
-            imageListFragment.setImageSelected(imageItem, position);
-        }
-        if (imagePagerFragment != null) {
-            imagePagerFragment.setImageSelected(imageItem, position);
-        }
-        
-        // Notify the parent listener that an image was selected
-        if (mParentOnImageSelectedListener != null) {
-            mParentOnImageSelectedListener.onImageSelected(imageItem, position);
-        }
- 
-    }
-}
-```
-
-*OnImageSelectedListener.java*
-```java
-public interface OnImageSelectedListener {
-    
-    /**
-     * Inform the listener that an image has been selected.
-     * 
-     * @param imageItem
-     * @param position
-     */
-    public void onImageSelected(ImageItem imageItem, int position);
-} 
-```
-
 <h2>Layout Dependent Actions</h2><p>Since Fragments are flexible, they provide the user more or less functionality depending on the device and its configuration. So when the user interface needs to take an action, it may require different steps to complete that action depending on the state of its Fragments. Controller code must be aware of the multiple states of the user interface, and take the appropriate action depending on that state.</p><ol><li>If a Fragment needed is not currently in the layout, create it and add it to the layout, or stack it on top if there is not enough room.</li><li>If a Fragment needed is optional (tablet only), and is not currently in the layout, ignore the update.</li><li>If a Fragment needed is currently in the layout, simply update it using an interface method.</li></ol>
-
-<h3>Code Example: Taking Layout Dependent Actions</h3>
-
-*ImageSelectorFragment.java*
-```java
-@Override
-public boolean onOptionsItemSelected(MenuItem item) {
-    Log.d(TAG, "onOptionsItemSelected");
- 
-    switch (item.getItemId()) {
-        case R.id.menu_rotate:
-            Log.i(TAG, "onOptionsItemSelected: rotate menu item selected");
-            
-            // This menu option is only provided to phone layouts, since
-            // tablet layouts show the image rotator at all times
-            
-            // Get the parent activity's fragment manager
-            FragmentManager fragmentManager = getFragmentManager();
-            
-            // Create the image rotator fragment and pass in arguments
-            ImageRotatorFragment imageRotatorFragment = ImageRotatorFragment.newInstance(mCurImageResourceId);
-            
-            // Add the new fragment on top of this one, and add it to
-            // the back stack
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(mContainer.getId(), imageRotatorFragment, ImageRotatorFragment.class.getName());
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            fragmentTransaction.addToBackStack(null);
-            
-            // Commit the transaction
-            fragmentTransaction.commit();
-            
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
-    }
-}
-```
-
-*MainActivity.java*
-```java
-@Override
-public void onImageSelected(ImageItem imageItem, int position) {
-    Log.d(TAG, "onImageSelected: title = " + imageItem.getTitle() + " position = " + position);
-    
-    FragmentManager fragmentManager = getSupportFragmentManager();
-    ImageRotatorFragment imageRotatorFragment = (ImageRotatorFragment) fragmentManager.findFragmentByTag(
-            ImageRotatorFragment.class.getName());
-    
-    // If the rotating fragment is in the current layout, update its
-    // selected image
-    if (imageRotatorFragment != null) {
-        imageRotatorFragment.setImageSelected(imageItem, position);
-    }
-}
-```
 
 <h2>Example Application</h2><p>While guidelines and code snippets are nice, only a working example application can really demonstrate these concepts.&nbsp;Consider an example application with some arbitrary requirements designed to highlight the topics covered so far. For instance, say the app should allow the user to view a set of images, and be able select those images to manipulate. The app should also optimize for any size display, in any orientation.</p>
 
@@ -423,11 +191,11 @@ public void onImageSelected(ImageItem imageItem, int position) {
 
 <p>Using the code architecture above, the <code>MainActivity</code> and <code>ImageSelectorFragment</code> will be used to marshal Fragment communication and handle the application navigation. The <code>ImageListFragment</code>, <code>ImagePagerFragment</code>, and <code>ImageRotatorFragment</code> will each implement their specific functionality, and use interfaces to inform their parents of events. In order to handle the 3D axis rotations, methods from API 11 (Android 3.0 / Honeycomb) are required. So, this example application will only run on Android 3.0 and higher devices (or emulators). However, the use of Fragments on pre-Honeycomb devices is made possible with the <a href="http://developer.android.com/tools/extras/support-library.html">Android Support Library</a>, which supports back to API 4 (Android 1.6 / Donut).</p>
 
-<p align="center"><img src="http://i.imgur.com/muXHeFL.png" title="" width="550"></p>
+<p align="center"><img src="http://i.imgur.com/muXHeFL.png" title="" width="600"></p>
 
-<p align="center"><img src="http://i.imgur.com/GYRU9YT.png" title="" width="550"></p>
+<p align="center"><img src="http://i.imgur.com/GYRU9YT.png" title="" width="600"></p>
 
-<p align="center"><img src="http://i.imgur.com/qnJooQV.png" title="" width="550"></p>
+<p align="center"><img src="http://i.imgur.com/qnJooQV.png" title="" width="600"></p>
 
 <h2>Summary</h2><p>Fragments are powerful tools used for building dynamic, flexible, and optimized user interfaces for Android applications. However, an organized design and architecture is required to get the best use of Fragments.</p>
 
