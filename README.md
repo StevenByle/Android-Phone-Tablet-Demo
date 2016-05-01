@@ -1,9 +1,8 @@
 #Optimizing for Phones and Tablets with Fragments
 
 <p align="center">
-  <img src="Screenshots/Phone%20Layout%20Screenshots%20Port.png" width=800/>
-  <img src="Screenshots/Phone%20Layout%20Screenshots%20Land.png" width=800/>
-  <img src="Screenshots/Tablet%20Layout%20Screenshots.png" width=800/>
+  <img src="Screenshots/Phone%20Layout%20Screenshots%20Port.png" width=650/>
+  <img src="Screenshots/Tablet%20Layout%20Screenshots.png" width=650/>
 </p>
 
 <h2>When Tablets Were Still Stone</h2><p>A long, long, time ago, when the Android framework was being developed in the mid-2000’s, modern mobile phone screens were still small, and mostly flip, slider, and candy bar form factors. Almost all input came from hardware buttons, as touch screens were just starting to make it into consumer products. With that in mind, the Android engineers designed a user interface framework that would be flexible enough to fit almost any screen size and aspect ratio, and adaptable enough to support a plethora of hardware configurations. However, the scope of Android at that time was focused around mobile phones, and large screen “tablet” devices were not even on the horizon yet. Actually, at that time, the term “tablet” was still used to reference what are now called “convertible laptops”.</p><h2>Activities and Views</h2><p>Android engineers ultimately came up with a relatively simple user interface framework. Layouts were based on Activities, which host View elements that the user can interact with. In an Model-View-Controller (MVC) architecture, an Activity acts as a Controller, while a View acts as (if it isn’t obvious) a View. User interface elements that user sees and interacts with are all Views: text, buttons, text fields, images, spinners, check boxes, switches, seek bars, lists, pagers, etc. Activities take those Views, arrange them into a screen layout, and manage their behavior as well as the application flow.</p><h2>Limitations of Activities</h2><p>While many things can be done with Activities, they have some limitations. Only a single Activity can be in a “resumed” state at a time, meaning the user can only interact with one Activity at a time. Activities also require control of the full screen when resumed, so Activities can’t share the screen with each other. However, Activities can be floating “dialog” windows and use transparency, but they still take focus of the entire screen, causing any visible Activities to be inactive.</p><p>So what’s the reason for these limitations? Well remember, early Android devices had very little RAM, as well as smaller screens. At the time, there were more performance detriments than gains if more than one Activity was allowed to be active at once. Also, there was little purpose of having multiple Activities on the screen at once. The same layout could suffice for every screen size, since those sizes didn’t vary much.<!--break-->
@@ -22,7 +21,7 @@
 	<li>Supporting larger screen sizes requires copying logic, or complicated shared logic.</li>
 </ul>
 
-<p align="center"><img src="http://i.imgur.com/EB4jqLm.png" title="" width="500"></p>
+<p align="center"><img src="http://i.imgur.com/EB4jqLm.png" title="" width="550"></p>
 
 <p>In order to solve this problem, Android engineers went back to work to allow Android to better optimize for tablets. With the release of Android 3.0, known as Honeycomb, Android introduced Fragments, a new component to create reusable user interfaces. Fragments are essentially sub-Activities, which can create their own layout of Views and behavior to manage. The key feature of is that multiple Fragments can be active at once, and they can use all, some, or none of the screen. An Activity is still required as the root of the user interface, so every Fragment must have a parent. Fragments can also have nested child Fragments. Like Activities, Fragments can also be stacked and later removed with the back button.</p><p>With the Fragment architecture, apps can simply encapsulate their logic into smaller pieces of functionality, and then reuse those pieces to best fit the device’s screen configuration. For instance, an email application can use a list Fragment to show a list of emails, and a detail Fragment to show the content of a selected email. On a phone, these Fragments can be used in a single Activity. Since there is less space on a phone, the list Fragments can take the full screen and the detail Fragment stack on top of the List Fragment when the user selects an email from the list. On a tablet, the list Fragment and detail Fragment have room to be displayed on the screen at the same time, and the detail Fragment can simply update when the user selects an email.</p>
 
@@ -34,7 +33,7 @@
 	<li>Can be reused and added dynamically to support larger screen sizes and different configurations.</li>
 </ul>
 
-<p align="center"><img src="http://i.imgur.com/LGe7YZa.png" title="" width="500"></p>
+<p align="center"><img src="http://i.imgur.com/LGe7YZa.png" title="" width="550"></p>
 
 <h2>Design Strategy</h2><p>While Fragments give a ton of flexibility to the user interface, they also require some code organization to be reusable and adaptable for diverse device configurations. In order for Fragments to perform well on phones, <a href="http://en.wikipedia.org/wiki/Phablet">phablets</a>, and tablets in all orientations, these guidelines should be followed:</p>
 <ol>
