@@ -1,4 +1,4 @@
-#Optimizing for Phones and Tablets with Fragments
+# Optimizing for Phones and Tablets with Fragments
 
 <p align="center">
   <img src="Screenshots/Phone%20Layout%20Screenshots%20Port.png" width=650/>
@@ -208,7 +208,7 @@
 
 <p>Android has come a long way in a short period of time, and will continue to evolve with mobile devices. By following some simple guidelines, it is possible to optimize applications to take advantage of every Android device.</p>
 
-##License
+## License
 
     Copyright 2013 Steven Byle
     
