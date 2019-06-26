@@ -1,4 +1,4 @@
-# Optimizing for Phones and Tablets with Fragments
+# Optimizing for Android Phones and Tablets with Fragments
 
 <p align="center">
   <img src="Screenshots/Phone%20Layout%20Screenshots%20Port.png" width=650/>
